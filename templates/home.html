@@ -1,31 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Ateliê{% endblock %}
+{% block title %}Início - Ateliê Vanda{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Bem-vindo, {{ session['username'] }}!</h1>
-    <p>Selecione uma opção no menu lateral para começar.</p>
+<div class="container" style="text-align: center; padding: 50px 20px;">
+    <h1 style="border:none; font-size: 2.5rem; color: #800080;">Olá, {{ session['username'] }}!</h1>
+    <p style="color: #666; font-size: 1.1rem; margin-bottom: 40px;">
+        O que você deseja fazer agora?
+    </p>
 
-    <div class="row" style="margin-top: 30px;">
-        <div class="col">
-            <a href="/pedidos/novo" style="display:block; background: #28a745; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
-                <i class='bx bx-cart-add' style="font-size: 3rem;"></i>
-                <h3>Novo Pedido</h3>
-            </a>
-        </div>
-        <div class="col">
-            <a href="/clientes" style="display:block; background: #17a2b8; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
-                <i class='bx bx-user' style="font-size: 3rem;"></i>
-                <h3>Clientes</h3>
-            </a>
-        </div>
-        <div class="col">
-            <a href="/acompanhar_pedidos" style="display:block; background: #007bff; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
-                <i class='bx bx-list-check' style="font-size: 3rem;"></i>
-                <h3>Acompanhar</h3>
-            </a>
-        </div>
+    <div style="display: flex; gap: 30px; justify-content: center; flex-wrap: wrap;">
+        
+        <a href="/dashboard" style="
+            background: linear-gradient(135deg, #2acaea 0%, #20b2aa 100%);
+            color: white;
+            width: 250px;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(42, 202, 234, 0.3);
+            transition: transform 0.3s;
+        " onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+            <i class='bx bx-grid-alt' style="font-size: 4rem; margin-bottom: 10px;"></i>
+            <h2 style="color: white; margin:0; font-size: 1.5rem;">Dashboard</h2>
+            <p style="opacity: 0.9; font-size: 0.9rem;">Ver métricas e resumo</p>
+        </a>
+
+        <a href="/pedidos/novo" style="
+            background: linear-gradient(135deg, #ff00ff 0%, #800080 100%);
+            color: white;
+            width: 250px;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
+            transition: transform 0.3s;
+        " onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+            <i class='bx bx-cart-add' style="font-size: 4rem; margin-bottom: 10px;"></i>
+            <h2 style="color: white; margin:0; font-size: 1.5rem;">Novo Pedido</h2>
+            <p style="opacity: 0.9; font-size: 0.9rem;">Iniciar uma nova venda</p>
+        </a>
+
+        <a href="/acompanhar_pedidos" style="
+            background: linear-gradient(135deg, #ff80ed 0%, #ff00ff 100%);
+            color: white;
+            width: 250px;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(255, 128, 237, 0.3);
+            transition: transform 0.3s;
+        " onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+            <i class='bx bx-list-check' style="font-size: 4rem; margin-bottom: 10px;"></i>
+            <h2 style="color: white; margin:0; font-size: 1.5rem;">Acompanhar</h2>
+            <p style="opacity: 0.9; font-size: 0.9rem;">Status dos pedidos</p>
+        </a>
+
     </div>
 </div>
 {% endblock %}

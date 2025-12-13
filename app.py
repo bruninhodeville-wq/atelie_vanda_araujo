@@ -185,6 +185,20 @@ def acompanhar_pedidos():
         return redirect(url_for('login'))
     return render_template('acompanhar_pedido.html')
 
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    
+    # Exemplo de dados para o dashboard (pode melhorar depois)
+    total_pedidos = Pedido.query.count()
+    total_clientes = Cliente.query.count()
+    total_produtos = Produto.query.count()
+    
+    return render_template('dashboard.html', 
+                           qtd_pedidos=total_pedidos, 
+                           qtd_clientes=total_clientes, 
+                           qtd_produtos=total_produtos)
+
 # --- CLIENTES ---
 @app.route('/clientes', methods=['GET'])
 def clientes():

@@ -1,12 +1,30 @@
-/* ===== VARIÁVEIS ===== */
+/* ===== VARIÁVEIS DE CORES (Nova Paleta Vibrante) ===== */
 :root {
+    /* Paleta enviada */
+    --roxo-profundo: #800080;
+    --magenta-neon: #ff00ff;
+    --ciano-vivo: #2acaea;
+    --turquesa: #40e0d0;
+    --rosa-claro: #ff80ed;
+    --verde-mar: #20b2aa;
+
+    /* Aplicação Lógica */
     --fundo-geral: #f4f7f6;
     --branco-puro: #ffffff;
-    --azul-principal: #007bff;
-    --sidebar-bg: #11101d;
+    
+    --sidebar-bg: var(--roxo-profundo);
+    --sidebar-hover: var(--magenta-neon);
     --sidebar-text: #fff;
+    
+    --botao-primario: var(--ciano-vivo);
+    --botao-hover: var(--turquesa);
+    --botao-sucesso: var(--verde-mar);
+    
+    --cinza-texto: #333;
+    --sombra-suave: rgba(128, 0, 128, 0.15); /* Sombra levemente roxa */
 }
 
+/* ===== RESET BÁSICO ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
 body {
@@ -17,11 +35,12 @@ body {
 
 a { text-decoration: none; }
 
-/* ===== SIDEBAR ===== */
+/* ===== SIDEBAR (ROXO) ===== */
 .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 78px;
     background: var(--sidebar-bg); padding: 6px 14px; z-index: 99;
     transition: all 0.5s ease;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.2);
 }
 .sidebar.open { width: 250px; }
 
@@ -45,81 +64,83 @@ a { text-decoration: none; }
     align-items: center; text-decoration: none; transition: all 0.4s ease;
     background: var(--sidebar-bg); 
 }
-.sidebar li a:hover { background: #fff; }
+/* Hover com Magenta */
+.sidebar li a:hover { background: var(--branco-puro); }
+.sidebar li a:hover .links_name, .sidebar li a:hover i {
+    color: var(--roxo-profundo); /* Inverte a cor no hover */
+}
+
 .sidebar li a .links_name {
     color: var(--sidebar-text); font-size: 15px; font-weight: 400;
     white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.4s;
 }
 .sidebar.open li a .links_name { opacity: 1; pointer-events: auto; }
-.sidebar li a:hover .links_name, .sidebar li a:hover i {
-    transition: all 0.5s ease; color: #11101d;
-}
+
 .sidebar i {
     color: #fff; height: 60px; min-width: 50px; font-size: 28px;
     text-align: center; line-height: 60px;
 }
 
-/* Tooltip (Opcional - aparece quando menu está fechado) */
-.sidebar li .tooltip {
-    position: absolute; top: -20px; left: calc(100% + 15px);
-    z-index: 3; background: #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    padding: 6px 12px; border-radius: 4px; font-size: 15px;
-    font-weight: 400; opacity: 0; white-space: nowrap; pointer-events: none;
-    transition: 0s; color: #333;
+/* Item Ativo (Página Atual) */
+.sidebar li a.active {
+    background: var(--magenta-neon); /* Destaque Magenta */
 }
-.sidebar li:hover .tooltip {
-    opacity: 1; pointer-events: auto; transition: all 0.4s ease;
-    top: 50%; transform: translateY(-50%);
+.sidebar li a.active i, .sidebar li a.active .links_name {
+    color: #fff !important;
 }
-.sidebar.open li .tooltip { display: none; }
 
-/* Logout/Profile area */
+/* Logout Area */
 .sidebar li.profile {
     position: fixed; height: 60px; width: 78px; left: 0; bottom: -8px;
-    padding: 10px 14px; background: #1d1b31; transition: all 0.5s ease; overflow: hidden;
+    padding: 10px 14px; background: #5a005a; /* Roxo mais escuro */
+    transition: all 0.5s ease; overflow: hidden;
 }
 .sidebar.open li.profile { width: 250px; }
 .sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
-.sidebar li.profile .job { font-size: 12px; }
+.sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
 
-/* ===== ÁREA PRINCIPAL (.home-section) ===== */
+/* ===== CONTEÚDO PRINCIPAL ===== */
 .home-section {
     position: relative; background: var(--fundo-geral); min-height: 100vh;
     top: 0; left: 78px; width: calc(100% - 78px);
-    transition: all 0.5s ease; z-index: 2; padding: 40px; /* Mais padding para afastar das bordas */
+    transition: all 0.5s ease; z-index: 2; padding: 40px;
 }
-.sidebar.open ~ .home-section {
-    left: 250px; width: calc(100% - 250px);
-}
+.sidebar.open ~ .home-section { left: 250px; width: calc(100% - 250px); }
 
-/* ===== CONTAINERS (AJUSTE FINO) ===== */
+/* ===== CONTAINERS ===== */
 .container, .container-form {
     background: var(--branco-puro);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    width: 100%;
-    max-width: 1100px; /* Largura máxima boa para leitura */
-    margin: 0 auto 30px auto; /* Centralizado */
+    padding: 30px; border-radius: 12px;
+    box-shadow: 0 4px 15px var(--sombra-suave);
+    width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
 }
 
-/* Ajustes de Títulos */
-h1 { color: #333; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-h2 { color: #555; margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
+h1 { color: var(--roxo-profundo); margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+h2 { color: var(--cinza-texto); margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
 
-/* Tabelas e Formulários (herdando do seu anterior, só garantindo largura) */
-input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
-.row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
-.col { flex: 1; min-width: 200px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-th { background: #f8f9fa; }
+/* Botões Personalizados */
+.btn-custom {
+    display: inline-block;
+    padding: 12px 24px;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: 0.3s;
+    border: none;
+    cursor: pointer;
+}
 
-/* Responsividade Mobile */
+/* Tabelas */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th { background: var(--verde-mar); color: white; padding: 12px; text-align: left; }
+td { padding: 12px; border-bottom: 1px solid #eee; }
+
+/* Responsividade */
 @media (max-width: 768px) {
     .sidebar { width: 0; padding: 0; }
     .sidebar.open { width: 250px; padding: 6px 14px; }
-    .home-section { left: 0; width: 100%; padding: 15px; } /* Menos padding no mobile */
-    .sidebar.open ~ .home-section { left: 0; width: 100%; opacity: 0.5; pointer-events: none; } /* Escurece fundo ao abrir menu */
-    #btn { display: block; position: fixed; top: 15px; left: 15px; background: #11101d; border-radius: 5px; padding: 5px; z-index: 1000; color: white;}
+    .home-section { left: 0; width: 100%; padding: 15px; }
+    .sidebar.open ~ .home-section { left: 0; width: 100%; opacity: 0.5; pointer-events: none; }
+    #btn { display: block; position: fixed; top: 15px; left: 15px; background: var(--roxo-profundo); border-radius: 5px; padding: 5px; z-index: 1000; color: white;}
 }

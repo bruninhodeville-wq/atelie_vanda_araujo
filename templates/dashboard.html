@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Métricas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="/home" style="color: #800080; font-weight: bold; margin-bottom: 20px; display: inline-block;">&larr; Voltar para Home</a>
+    <h1>Dashboard do Ateliê</h1>
+
+    <div class="row">
+        <div class="col" style="background: #2acaea; padding: 20px; border-radius: 10px; color: white; text-align: center;">
+            <i class='bx bx-cart' style="font-size: 2rem;"></i>
+            <h2>{{ qtd_pedidos }}</h2>
+            <p>Pedidos Totais</p>
+        </div>
+        <div class="col" style="background: #ff00ff; padding: 20px; border-radius: 10px; color: white; text-align: center;">
+            <i class='bx bx-user' style="font-size: 2rem;"></i>
+            <h2>{{ qtd_clientes }}</h2>
+            <p>Clientes</p>
+        </div>
+        <div class="col" style="background: #20b2aa; padding: 20px; border-radius: 10px; color: white; text-align: center;">
+            <i class='bx bx-package' style="font-size: 2rem;"></i>
+            <h2>{{ qtd_produtos }}</h2>
+            <p>Produtos</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; padding: 40px; border: 2px dashed #ccc; text-align: center; color: #999; border-radius: 10px;">
+        <i class='bx bx-bar-chart-alt-2' style="font-size: 3rem;"></i>
+        <p>Gráficos de vendas aparecerão aqui em breve.</p>
+    </div>
+</div>
+{% endblock %}

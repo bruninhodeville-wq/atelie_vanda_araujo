@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{% block title %}Ateliê System{% endblock %}</title>
-    
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
-</head>
-<body>
-
-    <div class="sidebar">
+<div class="sidebar">
         <div class="logo-details">
             <i class='bx bxl-c-plus-plus icon'></i>
             <div class="logo_name">Ateliê Vanda</div>
@@ -19,11 +7,12 @@
         <ul class="nav-list">
             <li>
                 <a href="/home">
-                    <i class='bx bx-grid-alt'></i>
-                    <span class="links_name">Dashboard</span>
+                    <i class='bx bx-home'></i>
+                    <span class="links_name">Home</span>
                 </a>
-                <span class="tooltip">Dashboard</span>
+                <span class="tooltip">Home</span>
             </li>
+            
             <li>
                 <a href="/pedidos/novo">
                     <i class='bx bx-cart-add'></i>
@@ -71,49 +60,16 @@
             </li>
         </ul>
     </div>
+<script>
+        // ... (código do sidebar toggle igual) ...
 
-    <section class="home-section">
-        {% block content %}{% endblock %}
-        
-        <footer style="text-align: center; padding: 20px; color: #999; font-size: 0.8rem; margin-top: 40px;">
-            <p>&copy; 2024 Ateliê Vanda Araújo - Sistema de Gestão</p>
-        </footer>
-    </section>
-
-    <script>
-        // Lógica do Menu Expansível
-        let sidebar = document.querySelector(".sidebar");
-        let closeBtn = document.querySelector("#btn");
-
-        closeBtn.addEventListener("click", ()=>{
-            sidebar.classList.toggle("open");
-            menuBtnChange();
-        });
-
-        function menuBtnChange() {
-            if(sidebar.classList.contains("open")){
-                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-            }else {
-                closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
-            }
-        }
-
-        // Lógica para ACENDER (Destacar) o item do menu atual
-        // Pega a URL atual e compara com os links do menu
+        // Lógica ATUALIZADA para ACENDER o menu
         const currentLocation = location.pathname;
         const menuItems = document.querySelectorAll('.nav-list li a');
         
         menuItems.forEach(item => {
             if(item.getAttribute('href') === currentLocation){
-                // Adiciona uma classe 'active' ao pai (li) ou ao próprio link
-                item.style.backgroundColor = "#fff"; // Fundo branco
-                item.style.color = "#11101d";       // Texto escuro
-                
-                // Força os ícones e texto dentro dele a ficarem escuros também
-                let icon = item.querySelector('i');
-                let text = item.querySelector('.links_name');
-                if(icon) icon.style.color = "#11101d";
-                if(text) text.style.color = "#11101d";
+                item.classList.add('active'); // Agora usa a classe .active do CSS novo
             }
         });
     </script>
