@@ -7,14 +7,19 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Dat
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-# Importação do WhiteNoise para arquivos estáticos na nuvem
-from whitenoise import WhiteNoise 
+from whitenoise import WhiteNoise
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
 
 # --- ATIVAÇÃO DO WHITENOISE (ESSENCIAL PARA O CSS FUNCIONAR NO RENDER) ---
-app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.wsgi_app = WhiteNoise(
+    app.wsgi_app, 
+    root=os.path.join(basedir, 'static'), 
+    prefix='static/'
+)
 
 app.config['SECRET_KEY'] = 'sua-chave-secreta-muito-dificil'
 
