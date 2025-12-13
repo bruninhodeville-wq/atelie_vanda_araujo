@@ -570,6 +570,39 @@ def deletar_pedido(id):
             flash('Senha incorreta.', 'danger')
     return render_template('confirmar_delete_pedido.html', pedido=pedido)
 
+@app.route('/debug')
+def debug():
+    import os
+    logs = []
+    
+    # 1. Onde estou?
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    logs.append(f"<b>1. Diretório do App:</b> {basedir}")
+    
+    # 2. A pasta 'static' existe aqui?
+    path_static = os.path.join(basedir, 'static')
+    if os.path.exists(path_static):
+        logs.append(f"✅ <b>Pasta 'static' ENCONTRADA!</b> Caminho: {path_static}")
+        
+        # 3. O que tem dentro dela?
+        try:
+            conteudo_static = os.listdir(path_static)
+            logs.append(f"📂 <b>Conteúdo de 'static':</b> {conteudo_static}")
+            
+            # 4. A pasta 'css' existe?
+            if 'css' in conteudo_static:
+                path_css = os.path.join(path_static, 'css')
+                conteudo_css = os.listdir(path_css)
+                logs.append(f"✅ <b>Pasta 'css' encontrada!</b> Conteúdo: {conteudo_css}")
+            else:
+                logs.append("❌ <b>ERRO:</b> A pasta 'css' NÃO está dentro de 'static'.")
+        except Exception as e:
+            logs.append(f"Erro ao ler pasta: {e}")
+    else:
+        logs.append(f"❌ <b>ERRO CRÍTICO:</b> A pasta 'static' NÃO existe no servidor. Caminho testado: {path_static}")
+
+    return "<br><br>".join(logs)
+
 # --- INICIALIZAÇÃO ---
 
 # Garantir tabelas criadas antes de iniciar
