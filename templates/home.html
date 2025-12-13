@@ -7,43 +7,66 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 </head>
 <body>
-    
-    <div style="max-width: 1200px; margin: 20px auto;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-    <h1>Olá, {{ session['username'] }}!</h1>
-    <p>Bem-vindo ao painel de controle do Ateliê.</p>
-    
-    <a href="/logout" class="logout">Sair (Logout)</a>
-    <hr>
 
-    <h2>O que você quer fazer?</h2>
-    
-    <div class="painel">
-        <a href="/clientes" class="botao-menu">
-            Clientes
-        </a>
-        <a href="/produtos" class="botao-menu">
-            Produtos
-        </a>
-        <a href="/pedidos" class="botao-menu">
-            Pedidos
-        </a>
-        <a href="/estoque" class="botao-menu">
-            Estoque (Em breve)
-        </a>
-        <a href="/dashboard" class="botao-menu">
-            Dashboard (Em breve)
-        </a>
+    <div class="container">
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span>Olá, <strong>{{ session['username'] }}</strong>!</span> | 
+            <a href="/logout" style="color: red; font-weight: bold;">Sair (Logout)</a>
+        </div>
+
+        <h1>Painel de Controle</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Bem-vindo ao sistema de gerenciamento do Ateliê.</p>
+
+        <div class="row">
+            <div class="col">
+                <a href="/pedidos/novo" class="btn-menu" style="background-color: #28a745;">
+                    <h3>📝 Novo Pedido</h3>
+                    <p>Abrir venda ou orçamento</p>
+                </a>
+            </div>
+            <div class="col">
+                <a href="/pedidos" class="btn-menu" style="background-color: #007bff;">
+                    <h3>📦 Ver Pedidos</h3>
+                    <p>Listar e gerenciar vendas</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <a href="/clientes" class="btn-menu" style="background-color: #17a2b8;">
+                    <h3>👥 Clientes</h3>
+                    <p>Cadastrar e editar clientes</p>
+                </a>
+            </div>
+            <div class="col">
+                <a href="/produtos" class="btn-menu" style="background-color: #ffc107; color: #333;">
+                    <h3>🏷️ Produtos</h3>
+                    <p>Gerenciar catálogo e preços</p>
+                </a>
+            </div>
+        </div>
     </div>
+
+    <style>
+        .btn-menu {
+            display: block;
+            padding: 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .btn-menu:hover {
+            transform: translateY(-5px);
+            opacity: 0.95;
+        }
+        .btn-menu h3 { color: white; margin-bottom: 5px; border: none;}
+        .btn-menu p { font-size: 0.9rem; opacity: 0.9; margin: 0;}
+    </style>
 
 </body>
 </html>
