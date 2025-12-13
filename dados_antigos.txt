@@ -1,0 +1,127 @@
+=== RELATÓRIO DE DADOS ANTIGOS (LOCAL) ===
+
+--- CLIENTES ---
+ID: 1 | Nome: Jaqueline dos Santos da Silva | Tel: 83998250849 | Tipo: Atacado
+   Endereço: Guarabira
+   Email: 
+------------------------------
+ID: 2 | Nome: Lorena Batista Nascimento | Tel: 75997099626 | Tipo: Atacado
+   Endereço: Feira de Santana
+   Email: None
+------------------------------
+ID: 3 | Nome: Halynny Valadares Martins da Silva | Tel: (63)999992304 | Tipo: Atacarejo
+   Endereço: Galeria Victoria Q 104 - Palmas
+   Email: None
+------------------------------
+ID: 4 | Nome: Elis Estefane B de Sousa | Tel: (85)999599716 | Tipo: Atacado
+   Endereço: Rua Jose Avelino, 154 - Centro
+   Email: None
+------------------------------
+
+
+--- PRODUTOS ---
+ID: 1 | Produto: Saia Escama Peixe
+   Varejo: R$ 150.0 | Atacado: R$ 68.0
+   Custo: R$ 20.0 | Tempo: 3.0h
+------------------------------
+ID: 2 | Produto: Saia Milly
+   Varejo: R$ 90.0 | Atacado: R$ 45.0
+   Custo: R$ 7.0 | Tempo: 0.4h
+------------------------------
+ID: 3 | Produto: Saia Naay
+   Varejo: R$ 130.0 | Atacado: R$ 52.0
+   Custo: R$ 13.3 | Tempo: 0.4h
+------------------------------
+ID: 4 | Produto: Saia Lateral
+   Varejo: R$ 150.0 | Atacado: R$ 68.0
+   Custo: R$ 20.0 | Tempo: 3.0h
+------------------------------
+ID: 5 | Produto: Conjunto Flor
+   Varejo: R$ 180.0 | Atacado: R$ 100.0
+   Custo: R$ 20.0 | Tempo: 5.0h
+------------------------------
+ID: 6 | Produto: Saia Flor
+   Varejo: R$ 150.0 | Atacado: R$ 70.0
+   Custo: R$ 20.0 | Tempo: 3.5h
+------------------------------
+ID: 7 | Produto: Vestido Luna
+   Varejo: R$ 180.0 | Atacado: R$ 80.0
+   Custo: R$ 17.0 | Tempo: 12.0h
+------------------------------
+ID: 8 | Produto: Vestido Stras
+   Varejo: R$ 450.0 | Atacado: R$ 215.0
+   Custo: R$ 80.0 | Tempo: 8.0h
+------------------------------
+ID: 9 | Produto: Vestido Ibiza
+   Varejo: R$ 220.0 | Atacado: R$ 155.0
+   Custo: R$ 55.0 | Tempo: 5.0h
+------------------------------
+ID: 10 | Produto: Vestido Star
+   Varejo: R$ 425.0 | Atacado: R$ 245.0
+   Custo: R$ 90.0 | Tempo: 8.0h
+------------------------------
+ID: 11 | Produto: Vestido Grecia
+   Varejo: R$ 389.0 | Atacado: R$ 248.0
+   Custo: R$ 100.0 | Tempo: 8.5h
+------------------------------
+ID: 12 | Produto: Vestido Deusa
+   Varejo: R$ 350.0 | Atacado: R$ 218.0
+   Custo: R$ 90.0 | Tempo: 6.5h
+------------------------------
+ID: 13 | Produto: Vestido Afrodite
+   Varejo: R$ 400.0 | Atacado: R$ 248.0
+   Custo: R$ 95.0 | Tempo: 9.5h
+------------------------------
+ID: 14 | Produto: Top Estrela
+   Varejo: R$ 130.0 | Atacado: R$ 50.0
+   Custo: R$ 10.0 | Tempo: 2.0h
+------------------------------
+
+
+--- PEDIDOS (Recentes Primeiro) ---
+PEDIDO #4011 | Cliente: Elis Estefane B de Sousa | Status: Rascunho
+   Data: 2025-12-08 11:01:10.169286 | Envio: Retirada | Desconto: 74.88
+   ITENS:
+    - 20x Saia Escama Peixe (Off) | R$ 58.0
+    - 5x Saia Escama Peixe (azul) | R$ 58.0
+    - 5x Top Estrela (Off) | R$ 30.0
+========================================
+PEDIDO #4010 | Cliente: Halynny Valadares Martins da Silva | Status: Rascunho
+   Data: 2025-12-08 10:50:47.652714 | Envio: Retirada | Desconto: 0.0
+   ITENS:
+    - 2x Vestido Stras (Off) | R$ 250.0
+    - 2x Vestido Ibiza (Off) | R$ 180.0
+    - 2x Vestido Ibiza (Marrom) | R$ 180.0
+    - 1x Vestido Star (Off) | R$ 280.0
+    - 1x Vestido Star (Dourado) | R$ 280.0
+    - 1x Vestido Grecia (Dourado) | R$ 260.0
+    - 1x Vestido Deusa (Off) | R$ 230.0
+    - 1x Vestido Afrodite (Dourado) | R$ 260.0
+    - 2x Vestido Luna (Preta) | R$ 100.0
+    - 2x Vestido Luna (Dourado) | R$ 100.0
+    - 1x Vestido Luna (Prata) | R$ 100.0
+    - 1x Vestido Luna (Off) | R$ 100.0
+========================================
+PEDIDO #4009 | Cliente: Lorena Batista Nascimento | Status: Pendente
+   Data: 2025-11-22 16:15:21.056417 | Envio: Excursão | Desconto: 0.0
+   ITENS:
+    - 3x Saia Milly (Off) | R$ 35.0
+    - 2x Saia Milly (Preta) | R$ 35.0
+    - 1x Saia Milly (Azul Marinho) | R$ 35.0
+    - 1x Saia Milly (Verde Musgo) | R$ 35.0
+    - 2x Saia Milly (Marrom) | R$ 35.0
+    - 1x Saia Naay (Marrom) | R$ 40.0
+    - 2x Saia Escama Peixe (Preta) | R$ 68.0
+    - 2x Saia Escama Peixe (Off) | R$ 68.0
+    - 1x Saia Escama Peixe (Marrom) | R$ 68.0
+    - 1x Saia Escama Peixe (Nude) | R$ 68.0
+    - 1x Saia Escama Peixe (Verde Musgo) | R$ 68.0
+    - 1x Saia Lateral (Off) | R$ 68.0
+    - 1x Conjunto Flor (Off) | R$ 100.0
+    - 1x Saia Flor (Preta) | R$ 70.0
+========================================
+PEDIDO #4008 | Cliente: Jaqueline dos Santos da Silva | Status: Pendente
+   Data: 2025-11-21 18:47:51.842444 | Envio: Excursão | Desconto: 116.0
+   ITENS:
+    - 20x Saia Escama Peixe (None) | R$ 58.0
+========================================

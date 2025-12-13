@@ -7,9 +7,15 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Dat
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+# Importação do WhiteNoise para arquivos estáticos na nuvem
+from whitenoise import WhiteNoise 
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
+
+# --- ATIVAÇÃO DO WHITENOISE (ESSENCIAL PARA O CSS FUNCIONAR NO RENDER) ---
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+
 app.config['SECRET_KEY'] = 'sua-chave-secreta-muito-dificil'
 
 # --- CONFIGURAÇÃO DO BANCO DE DADOS (HÍBRIDA) ---
@@ -69,7 +75,7 @@ class Produto(db.Model):
 
 class Pedido(db.Model):
     __tablename__ = 'Pedidos'
-    # No Postgres, autoincrement é padrão via SERIAL, removemos sqlite_autoincrement
+    # No Postgres, autoincrement é padrão via SERIAL
     id = Column(Integer, primary_key=True)
     cliente_id = Column(Integer, ForeignKey('Clientes.id'), nullable=False)
     data_pedido = Column(DateTime, default=func.now())
