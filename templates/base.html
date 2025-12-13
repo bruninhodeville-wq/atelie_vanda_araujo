@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Ateliê System{% endblock %}</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo-details">
+            <i class='bx bxl-c-plus-plus icon'></i>
+            <div class="logo_name">Ateliê Vanda</div>
+            <i class='bx bx-menu' id="btn"></i>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="/home">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Dashboard</span>
+                </a>
+                <span class="tooltip">Dashboard</span>
+            </li>
+            <li>
+                <a href="/pedidos/novo">
+                    <i class='bx bx-cart-add'></i>
+                    <span class="links_name">Novo Pedido</span>
+                </a>
+                <span class="tooltip">Novo Pedido</span>
+            </li>
+            <li>
+                <a href="/pedidos">
+                    <i class='bx bx-list-ul'></i>
+                    <span class="links_name">Ver Pedidos</span>
+                </a>
+                <span class="tooltip">Ver Pedidos</span>
+            </li>
+            <li>
+                <a href="/acompanhar_pedidos">
+                    <i class='bx bx-list-check'></i>
+                    <span class="links_name">Acompanhar</span>
+                </a>
+                <span class="tooltip">Acompanhar</span>
+            </li>
+            <li>
+                <a href="/clientes">
+                    <i class='bx bx-user'></i>
+                    <span class="links_name">Clientes</span>
+                </a>
+                <span class="tooltip">Clientes</span>
+            </li>
+            <li>
+                <a href="/produtos">
+                    <i class='bx bx-package'></i>
+                    <span class="links_name">Produtos</span>
+                </a>
+                <span class="tooltip">Produtos</span>
+            </li>
+            
+            <li class="profile">
+                <div class="profile-details">
+                    <div class="name_job">
+                        <div class="name">{{ session['username'] }}</div>
+                        <div class="job">Logado</div>
+                    </div>
+                </div>
+                <a href="/logout"><i class='bx bx-log-out' id="log_out"></i></a>
+            </li>
+        </ul>
+    </div>
+
+    <section class="home-section">
+        {% block content %}{% endblock %}
+        
+        <footer style="text-align: center; padding: 20px; color: #999; font-size: 0.8rem; margin-top: 40px;">
+            <p>&copy; 2024 Ateliê Vanda Araújo - Sistema de Gestão</p>
+        </footer>
+    </section>
+
+    <script>
+        // Lógica do Menu Expansível
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+
+        closeBtn.addEventListener("click", ()=>{
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+
+        function menuBtnChange() {
+            if(sidebar.classList.contains("open")){
+                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            }else {
+                closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+            }
+        }
+
+        // Lógica para ACENDER (Destacar) o item do menu atual
+        // Pega a URL atual e compara com os links do menu
+        const currentLocation = location.pathname;
+        const menuItems = document.querySelectorAll('.nav-list li a');
+        
+        menuItems.forEach(item => {
+            if(item.getAttribute('href') === currentLocation){
+                // Adiciona uma classe 'active' ao pai (li) ou ao próprio link
+                item.style.backgroundColor = "#fff"; // Fundo branco
+                item.style.color = "#11101d";       // Texto escuro
+                
+                // Força os ícones e texto dentro dele a ficarem escuros também
+                let icon = item.querySelector('i');
+                let text = item.querySelector('.links_name');
+                if(icon) icon.style.color = "#11101d";
+                if(text) text.style.color = "#11101d";
+            }
+        });
+    </script>
+</body>
+</html>

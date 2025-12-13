@@ -1,112 +1,31 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Painel Principal - Ateliê</title>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="sidebar">
-        <div class="logo-details">
-            <i class='bx bxl-c-plus-plus icon'></i>
-            <div class="logo_name">Ateliê System</div>
-            <i class='bx bx-menu' id="btn" ></i>
+{% block title %}Dashboard - Ateliê{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Bem-vindo, {{ session['username'] }}!</h1>
+    <p>Selecione uma opção no menu lateral para começar.</p>
+
+    <div class="row" style="margin-top: 30px;">
+        <div class="col">
+            <a href="/pedidos/novo" style="display:block; background: #28a745; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
+                <i class='bx bx-cart-add' style="font-size: 3rem;"></i>
+                <h3>Novo Pedido</h3>
+            </a>
         </div>
-        <ul class="nav-list">
-            <li>
-                <a href="/home">
-                    <i class='bx bx-grid-alt'></i>
-                    <span class="links_name">Dashboard</span>
-                </a>
-                <span class="tooltip">Dashboard</span>
-            </li>
-            <li>
-                <a href="/pedidos/novo">
-                    <i class='bx bx-cart-add' ></i>
-                    <span class="links_name">Novo Pedido</span>
-                </a>
-                <span class="tooltip">Novo Pedido</span>
-            </li>
-            <li>
-                <a href="/acompanhar_pedidos">
-                    <i class='bx bx-list-check' ></i>
-                    <span class="links_name">Acompanhar Pedidos</span>
-                </a>
-                <span class="tooltip">Acompanhar Pedidos</span>
-            </li>
-            <li>
-                <a href="/clientes">
-                    <i class='bx bx-user' ></i>
-                    <span class="links_name">Clientes</span>
-                </a>
-                <span class="tooltip">Clientes</span>
-            </li>
-            <li>
-                <a href="/produtos">
-                    <i class='bx bx-package' ></i>
-                    <span class="links_name">Produtos</span>
-                </a>
-                <span class="tooltip">Produtos</span>
-            </li>
-            
-            <li class="profile">
-                <div class="profile-details">
-                    <div class="name_job">
-                        <div class="name">{{ session['username'] }}</div>
-                        <div class="job">Usuário Logado</div>
-                    </div>
-                </div>
-                <a href="/logout">
-                    <i class='bx bx-log-out' id="log_out" ></i>
-                </a>
-            </li>
-        </ul>
+        <div class="col">
+            <a href="/clientes" style="display:block; background: #17a2b8; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
+                <i class='bx bx-user' style="font-size: 3rem;"></i>
+                <h3>Clientes</h3>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/acompanhar_pedidos" style="display:block; background: #007bff; color: white; padding: 30px; border-radius: 10px; text-align: center; transition: 0.3s;">
+                <i class='bx bx-list-check' style="font-size: 3rem;"></i>
+                <h3>Acompanhar</h3>
+            </a>
+        </div>
     </div>
-
-    <section class="home-section">
-        <div class="text">Dashboard</div>
-        
-        <div class="container">
-            <h1>Bem-vindo ao Painel, <strong>{{ session['username'] }}</strong>!</h1>
-            <p style="text-align: center; color: #666; margin-bottom: 30px;">
-                Utilize o menu lateral para navegar pelo sistema.
-            </p>
-            
-            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-                <a href="/pedidos/novo" style="flex: 1; min-width: 200px; padding: 20px; background: #28a745; color: white; border-radius: 10px; text-align: center;">
-                    <i class='bx bx-cart-add' style="font-size: 3rem;"></i>
-                    <h3>Novo Pedido</h3>
-                </a>
-                <a href="/acompanhar_pedidos" style="flex: 1; min-width: 200px; padding: 20px; background: #007bff; color: white; border-radius: 10px; text-align: center;">
-                    <i class='bx bx-list-check' style="font-size: 3rem;"></i>
-                    <h3>Acompanhar</h3>
-                </a>
-                </div>
-        </div>
-    </section>
-
-    <script>
-        let sidebar = document.querySelector(".sidebar");
-        let closeBtn = document.querySelector("#btn");
-        let searchBtn = document.querySelector(".bx-search"); // Se você adicionar uma busca depois
-
-        closeBtn.addEventListener("click", ()=>{
-          sidebar.classList.toggle("open");
-          menuBtnChange();//chamando a função (opcional)
-        });
-
-        // Opcional: Mudar o ícone do botão de menu quando o sidebar estiver aberto
-        function menuBtnChange() {
-         if(sidebar.classList.contains("open")){
-           closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//troca o ícone
-         }else {
-           closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//troca de volta
-         }
-        }
-    </script>
-
-</body>
-</html>
+</div>
+{% endblock %}
