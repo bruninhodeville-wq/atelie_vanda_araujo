@@ -1,27 +1,18 @@
-/* ===== VARIÁVEIS DE CORES (Nova Paleta Vibrante) ===== */
+/* ===== VARIÁVEIS DE CORES (Paleta Vibrante Roxa/Neon) ===== */
 :root {
-    /* Paleta enviada */
     --roxo-profundo: #800080;
     --magenta-neon: #ff00ff;
     --ciano-vivo: #2acaea;
     --turquesa: #40e0d0;
-    --rosa-claro: #ff80ed;
     --verde-mar: #20b2aa;
-
-    /* Aplicação Lógica */
+    
+    /* Variáveis Funcionais */
     --fundo-geral: #f4f7f6;
     --branco-puro: #ffffff;
-    
     --sidebar-bg: var(--roxo-profundo);
-    --sidebar-hover: var(--magenta-neon);
-    --sidebar-text: #fff;
-    
-    --botao-primario: var(--ciano-vivo);
-    --botao-hover: var(--turquesa);
-    --botao-sucesso: var(--verde-mar);
-    
-    --cinza-texto: #333;
-    --sombra-suave: rgba(128, 0, 128, 0.15); /* Sombra levemente roxa */
+    --sidebar-text: #ffffff;
+    --cinza-texto: #333333;
+    --sombra-suave: 0 4px 15px rgba(128, 0, 128, 0.15);
 }
 
 /* ===== RESET BÁSICO ===== */
@@ -30,17 +21,17 @@
 body {
     background-color: var(--fundo-geral);
     min-height: 100vh;
-    display: flex;
+    display: flex; /* Essencial para o layout Sidebar + Conteúdo */
 }
 
 a { text-decoration: none; }
 
-/* ===== SIDEBAR (ROXO) ===== */
+/* ===== SIDEBAR (Menu Lateral) ===== */
 .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 78px;
     background: var(--sidebar-bg); padding: 6px 14px; z-index: 99;
     transition: all 0.5s ease;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
 }
 .sidebar.open { width: 250px; }
 
@@ -64,11 +55,8 @@ a { text-decoration: none; }
     align-items: center; text-decoration: none; transition: all 0.4s ease;
     background: var(--sidebar-bg); 
 }
-/* Hover com Magenta */
 .sidebar li a:hover { background: var(--branco-puro); }
-.sidebar li a:hover .links_name, .sidebar li a:hover i {
-    color: var(--roxo-profundo); /* Inverte a cor no hover */
-}
+.sidebar li a:hover .links_name, .sidebar li a:hover i { color: var(--roxo-profundo); }
 
 .sidebar li a .links_name {
     color: var(--sidebar-text); font-size: 15px; font-weight: 400;
@@ -81,33 +69,38 @@ a { text-decoration: none; }
     text-align: center; line-height: 60px;
 }
 
-/* Item Ativo (Página Atual) */
+/* Item Ativo (Destaque Magenta) */
 .sidebar li a.active {
-    background: var(--magenta-neon); /* Destaque Magenta */
+    background: var(--magenta-neon);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
 }
-.sidebar li a.active i, .sidebar li a.active .links_name {
-    color: #fff !important;
-}
+.sidebar li a.active i, .sidebar li a.active .links_name { color: #fff !important; }
 
-/* Logout Area */
+/* Área de Logout */
 .sidebar li.profile {
     position: fixed; height: 60px; width: 78px; left: 0; bottom: -8px;
-    padding: 10px 14px; background: #5a005a; /* Roxo mais escuro */
+    padding: 10px 14px; background: #5a005a;
     transition: all 0.5s ease; overflow: hidden;
 }
 .sidebar.open li.profile { width: 250px; }
 .sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
 .sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
 
-/* ===== CONTEÚDO PRINCIPAL ===== */
+/* ===== CONTEÚDO PRINCIPAL (CORREÇÃO DE LAYOUT) ===== */
 .home-section {
-    position: relative; background: var(--fundo-geral); min-height: 100vh;
-    top: 0; left: 78px; width: calc(100% - 78px);
-    transition: all 0.5s ease; z-index: 2; padding: 40px;
+    position: relative; 
+    background: var(--fundo-geral); 
+    min-height: 100vh;
+    top: 0; 
+    left: 78px; /* O Pulo do Gato: Empurra o conteúdo para a direita */
+    width: calc(100% - 78px);
+    transition: all 0.5s ease; 
+    z-index: 2; 
+    padding: 40px;
 }
 .sidebar.open ~ .home-section { left: 250px; width: calc(100% - 250px); }
 
-/* ===== CONTAINERS ===== */
+/* ===== CONTAINERS, FORMULÁRIOS E TABELAS ===== */
 .container, .container-form {
     background: var(--branco-puro);
     padding: 30px; border-radius: 12px;
@@ -115,28 +108,40 @@ a { text-decoration: none; }
     width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
 }
 
-h1 { color: var(--roxo-profundo); margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-h2 { color: var(--cinza-texto); margin-top: 25px; margin-bottom: 15px; font-size: 1.3rem; }
+h1 { color: var(--roxo-profundo); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+h2 { color: var(--cinza-texto); margin-top: 20px; font-size: 1.3rem; }
 
-/* Botões Personalizados */
-.btn-custom {
-    display: inline-block;
-    padding: 12px 24px;
-    color: white;
-    border-radius: 8px;
-    font-weight: bold;
-    text-align: center;
-    transition: 0.3s;
-    border: none;
-    cursor: pointer;
+/* Inputs e Selects */
+input, select, textarea {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;
+    font-size: 1rem;
+}
+input:focus, select:focus { border-color: var(--roxo-profundo); outline: none; }
+
+/* Botões Gerais */
+button[type="submit"], .btn-custom {
+    background-color: var(--verde-mar); color: white; padding: 12px 20px; border: none;
+    border-radius: 6px; font-size: 1rem; cursor: pointer; transition: 0.3s;
+}
+button:hover { opacity: 0.9; }
+
+/* Botão Voltar (Correção Visual) */
+.voltar {
+    display: inline-block; padding: 8px 15px; background: #999; color: white;
+    border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px;
 }
 
-/* Tabelas */
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+/* Tabelas Responsivas */
+.table-responsive { overflow-x: auto; width: 100%; border: 1px solid #eee; border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
 th { background: var(--verde-mar); color: white; padding: 12px; text-align: left; }
 td { padding: 12px; border-bottom: 1px solid #eee; }
 
-/* Responsividade */
+/* Grid System Simples */
+.row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+.col { flex: 1; min-width: 200px; }
+
+/* Responsividade Mobile */
 @media (max-width: 768px) {
     .sidebar { width: 0; padding: 0; }
     .sidebar.open { width: 250px; padding: 6px 14px; }

@@ -1,4 +1,17 @@
-<div class="sidebar">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}Ateliê System{% endblock %}</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+
+    <div class="sidebar">
         <div class="logo-details">
             <i class='bx bxl-c-plus-plus icon'></i>
             <div class="logo_name">Ateliê Vanda</div>
@@ -20,6 +33,7 @@
                 </a>
                 <span class="tooltip">Novo Pedido</span>
             </li>
+
             <li>
                 <a href="/pedidos">
                     <i class='bx bx-list-ul'></i>
@@ -27,6 +41,7 @@
                 </a>
                 <span class="tooltip">Ver Pedidos</span>
             </li>
+
             <li>
                 <a href="/acompanhar_pedidos">
                     <i class='bx bx-list-check'></i>
@@ -34,6 +49,7 @@
                 </a>
                 <span class="tooltip">Acompanhar</span>
             </li>
+
             <li>
                 <a href="/clientes">
                     <i class='bx bx-user'></i>
@@ -41,6 +57,7 @@
                 </a>
                 <span class="tooltip">Clientes</span>
             </li>
+
             <li>
                 <a href="/produtos">
                     <i class='bx bx-package'></i>
@@ -60,16 +77,41 @@
             </li>
         </ul>
     </div>
-<script>
-        // ... (código do sidebar toggle igual) ...
 
-        // Lógica ATUALIZADA para ACENDER o menu
+    <section class="home-section">
+        {% block content %}{% endblock %}
+        
+        <footer style="text-align: center; padding: 20px; color: #999; font-size: 0.8rem; margin-top: 40px;">
+            <p>&copy; 2024 Ateliê Vanda Araújo - Sistema de Gestão</p>
+        </footer>
+    </section>
+
+    <script>
+        // Lógica para abrir/fechar o menu lateral
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+
+        closeBtn.addEventListener("click", ()=>{
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+
+        function menuBtnChange() {
+            if(sidebar.classList.contains("open")){
+                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            }else {
+                closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
+            }
+        }
+
+        // Lógica para ACENDER (Destacar) o item do menu atual
         const currentLocation = location.pathname;
         const menuItems = document.querySelectorAll('.nav-list li a');
         
         menuItems.forEach(item => {
+            // Se o link for igual à URL atual, adiciona a classe .active
             if(item.getAttribute('href') === currentLocation){
-                item.classList.add('active'); // Agora usa a classe .active do CSS novo
+                item.classList.add('active');
             }
         });
     </script>
