@@ -2,27 +2,204 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login - Ateliê Vanda Araújo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ateliê Vanda</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+
+    <style>
+        /* ===== ESTILOS EXCLUSIVOS DO LOGIN ===== */
+        
+        /* Sobrescreve o body padrão para centralizar tudo */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e6e9f0 100%); /* Fundo suave */
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* O Cartão de Login */
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(128, 0, 128, 0.15); /* Sombra roxa suave */
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* Animação de entrada */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Título e Logo */
+        .login-header h1 {
+            color: var(--roxo-profundo);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            border: none; /* Remove a borda padrão do h1 global */
+            padding: 0;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .icon-logo {
+            font-size: 3rem;
+            color: var(--magenta-neon);
+            margin-bottom: 10px;
+        }
+
+        /* Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 45px; /* Espaço para o ícone */
+            border: 1px solid #ddd;
+            border-radius: 50px; /* Bordas bem redondas (Feminino/Moderno) */
+            font-size: 1rem;
+            transition: 0.3s;
+            background: #fafafa;
+        }
+
+        .input-group input:focus {
+            border-color: var(--magenta-neon);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1);
+            outline: none;
+        }
+
+        .input-group input:focus + i {
+            color: var(--magenta-neon); /* Ícone muda de cor */
+        }
+
+        /* Botão de Entrar */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--roxo-profundo), var(--magenta-neon));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
+        }
+
+        /* Links de Rodapé */
+        .footer-links {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a {
+            color: var(--roxo-profundo);
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mensagens de Flash (Erro/Sucesso) */
+        .alert {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .alert-danger { background: #ffe6e6; color: #cc0000; border: 1px solid #ffcccc; }
+        .alert-success { background: #e6ffe6; color: #006600; border: 1px solid #ccffcc; }
+
+    </style>
 </head>
 <body>
-    <h1>Bem-vindo ao Sistema do Ateliê!</h1>
-    <p>Moda Praia em Macramê</p>
 
-    <form action="/login" method="POST">
-        <h2>Faça seu Login</h2>
-        <div>
-            <label for="username">Usuário:</label>
-            <input type="text" id="username" name="username" required>
+    <div class="login-card">
+        <div class="login-header">
+            <i class='bx bxl-c-plus-plus icon-logo'></i>
+            <h1>Bem-vindo(a)</h1>
+            <p>Acesse o painel do Ateliê Vanda</p>
         </div>
-        <div>
-            <label for="password">Senha:</label>
-            <input type="password" id="password" name="password" required>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                 {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/login">
+            <div class="input-group">
+                <label for="username">Usuário</label>
+                <div class="input-wrapper">
+                    <input type="text" name="username" id="username" placeholder="Digite seu usuário" required autocomplete="off">
+                    <i class='bx bx-user'></i>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="password" placeholder="Digite sua senha" required>
+                    <i class='bx bx-lock-alt'></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+
+        <div class="footer-links">
+            <p>Ainda não tem conta? <a href="/register">Cadastre-se</a></p>
         </div>
-        <button type="submit">Entrar</button>
-    </form>
-    
-    <p>Ainda não tem um usuário? <a href="/register">Registre-se aqui</a>.</p>
+    </div>
+
 </body>
 </html>
