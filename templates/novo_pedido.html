@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pedido {{ proximo_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar { display: inline-block; margin-bottom: 20px; padding: 10px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px; }
+        .container-form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .info-box { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 10px; display: none; border-left: 5px solid #007bff; }
+        .btn-link { color: #007bff; text-decoration: none; margin-left: 10px; font-size: 0.9em; }
+        .row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 15px; }
+        .col { flex: 1; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; color: #333; }
+        
+        /* Tabela ajustada via CSS externo, mas mantendo IDs para JS */
+        #tabela_carrinho { width: 100%; margin-top: 15px; border-collapse: collapse; }
+        #tabela_carrinho th, #tabela_carrinho td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        #tabela_carrinho th { background-color: #f8f9fa; }
+        
+        .btn-add { background-color: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; height: 42px;}
+        .btn-remove { color: red; cursor: pointer; font-weight: bold; }
+        .total-carrinho { text-align: right; font-size: 1.2em; margin-top: 10px; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body>
+    <a href="/home" class="voltar">&larr; Cancelar e Voltar</a>
+
+    {% if pedido_atual %}
+        <h1>Editar Pedido <span style="color: #ffc107;">#{{ proximo_id }}</span> (Rascunho)</h1>
+    {% else %}
+        <h1>Abrir Novo Pedido <span style="color: #007bff;">#{{ proximo_id }}</span></h1>
+    {% endif %}
+
+    <form action="/pedidos/novo" method="POST" class="container-form" onsubmit="return prepararEnvio()">
+        
+        <input type="hidden" name="pedido_id_editar" value="{{ pedido_atual.id if pedido_atual else '' }}">
+
+        <h2>1. Identificar Cliente</h2>
+        <div>
+            <label for="busca_cliente">Buscar Cliente:</label>
+            <div style="display: flex;">
+                <input list="clientes_list" id="busca_cliente" 
+                       value="{{ pedido_atual.cliente.nome if pedido_atual else '' }}"
+                       placeholder="Digite para buscar..." style="flex-grow: 1; padding: 10px;" autocomplete="off" onfocus="this.value=''">
+                
+                <datalist id="clientes_list">
+                    {% for cliente in clientes %}
+                        <option data-id="{{ cliente.id }}" 
+                                data-telefone="{{ cliente.telefone }}"
+                                data-endereco="{{ cliente.endereco }}"
+                                data-tipo="{{ cliente.tipo_cliente }}"
+                                value="{{ cliente.nome }}">
+                    {% endfor %}
+                </datalist>
+                <a href="/clientes/novo" class="btn-link" style="align-self: center;">+ Cadastrar Novo</a>
+            </div>
+            <input type="hidden" name="cliente_id" id="cliente_id_hidden" value="{{ pedido_atual.cliente_id if pedido_atual else '' }}" required>
+        </div>
+
+        <div id="info_cliente" class="info-box" style="{{ 'display:block;' if pedido_atual else 'display:none;' }}">
+            <p><strong>Tipo:</strong> <span id="info_tipo">{{ pedido_atual.cliente.tipo_cliente if pedido_atual else '' }}</span></p>
+            <p><strong>Telefone:</strong> <span id="info_telefone">{{ pedido_atual.cliente.telefone if pedido_atual else '' }}</span></p>
+            <p><strong>Endereço:</strong> <span id="info_endereco">{{ pedido_atual.cliente.endereco if pedido_atual else '' }}</span></p>
+        </div>
+
+        <h2>2. Adicionar Produtos ao Carrinho</h2>
+        <div class="row">
+            <div class="col">
+                <label for="tabela_preco">Tabela de Preço:</label>
+                <select id="tabela_preco" name="tabela_preco" required style="width: 100%; padding: 8px;">
+                    <option value="Varejo">Varejo</option>
+                    <option value="Atacado">Atacado</option>
+                    <option value="Atacarejo">Atacarejo</option>
+                    <option value="Atacado Premium">Atacado Premium</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 3;">
+                <label>Produto:</label>
+                <select id="produto_select" style="width: 100%; padding: 8px;">
+                    <option value="" disabled selected>-- Escolha --</option>
+                    {% for produto in produtos %}
+                        <option value="{{ produto.id }}"
+                                data-varejo="{{ produto.preco_varejo }}"
+                                data-atacado="{{ produto.preco_atacado }}"
+                                data-atacarejo="{{ produto.preco_atacarejo }}"
+                                data-premium="{{ produto.preco_atacado_premium }}">
+                            {{ produto.nome_produto }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col" style="flex: 2;">
+                <label>Cor:</label>
+                <input type="text" id="cor_produto" style="width: 100%; padding: 8px;">
+            </div>
+            <div class="col" style="flex: 1;">
+                <label>Qtd:</label>
+                <input type="number" id="qtd_select" value="1" min="1" style="width: 100%; padding: 8px;">
+            </div>
+            <div class="col" style="flex: 1;">
+                <button type="button" class="btn-add" onclick="adicionarAoCarrinho()">+ Incluir</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabela_carrinho">
+                <thead><tr><th>Produto</th><th>Cor</th><th>Preço</th><th>Qtd</th><th>Subtotal</th><th>Ação</th></tr></thead>
+                <tbody id="corpo_carrinho"></tbody>
+            </table>
+        </div>
+        
+        <div class="total-carrinho">Total: <span id="total_display">R$ 0.00</span></div>
+        <input type="hidden" name="itens_carrinho" id="itens_carrinho">
+
+        <h2>3. Detalhes do Envio</h2>
+        <div class="row">
+            <div class="col">
+                <select id="forma_envio" name="forma_envio" required style="width: 100%; padding: 8px;">
+                    <option value="Retirada" {% if pedido_atual and pedido_atual.forma_envio == 'Retirada' %}selected{% endif %}>Retirada</option>
+                    <option value="Correios" {% if pedido_atual and pedido_atual.forma_envio == 'Correios' %}selected{% endif %}>Correios</option>
+                    <option value="Excursão" {% if pedido_atual and pedido_atual.forma_envio == 'Excursão' %}selected{% endif %}>Excursão</option>
+                    <option value="Motoqueiro" {% if pedido_atual and pedido_atual.forma_envio == 'Motoqueiro' %}selected{% endif %}>Motoqueiro</option>
+                </select>
+            </div>
+        </div>
+
+        <br><hr><br>
+        <button type="submit" style="width: 100%; font-size: 18px; padding: 15px; background-color: #28a745; color: white; border: none; cursor: pointer;">
+            {% if pedido_atual %} Atualizar Pedido e Ir para Pagamento {% else %} Gerar Pedido {% endif %}
+        </button>
+    </form>
+
+    <script>
+        // RECARREGA OS ITENS DO PYTHON (Se existirem)
+        let carrinho = {{ itens_pre_carregados | safe }};
+        
+        // Inicia a tabela
+        atualizarTabelaVisual();
+
+        // Se tiver cliente carregado, ajusta a tabela de preço
+        {% if pedido_atual %}
+            document.getElementById('tabela_preco').value = "{{ pedido_atual.cliente.tipo_cliente }}";
+        {% endif %}
+
+        // --- Scripts Padrão (Busca e Carrinho) ---
+        document.getElementById('busca_cliente').addEventListener('input', function() {
+            var val = this.value;
+            var list = document.getElementById('clientes_list').options;
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].value === val) {
+                    var id = list[i].getAttribute('data-id');
+                    var tipo = list[i].getAttribute('data-tipo');
+                    document.getElementById('cliente_id_hidden').value = id;
+                    document.getElementById('info_tipo').innerText = tipo;
+                    document.getElementById('info_telefone').innerText = list[i].getAttribute('data-telefone');
+                    document.getElementById('info_endereco').innerText = list[i].getAttribute('data-endereco');
+                    document.getElementById('info_cliente').style.display = 'block';
+                    document.getElementById('tabela_preco').value = tipo;
+                    break;
+                }
+            }
+        });
+
+        function adicionarAoCarrinho() {
+            var select = document.getElementById('produto_select');
+            var tabelaSelecionada = document.getElementById('tabela_preco').value;
+            var qtd = parseFloat(document.getElementById('qtd_select').value);
+            var corDigitada = document.getElementById('cor_produto').value || "-";
+
+            if (select.selectedIndex <= 0) { alert("Selecione um produto!"); return; }
+
+            var option = select.options[select.selectedIndex];
+            var precoUnitario = 0;
+            if (tabelaSelecionada === 'Varejo') precoUnitario = parseFloat(option.getAttribute('data-varejo'));
+            else if (tabelaSelecionada === 'Atacado') precoUnitario = parseFloat(option.getAttribute('data-atacado'));
+            else if (tabelaSelecionada === 'Atacarejo') precoUnitario = parseFloat(option.getAttribute('data-atacarejo'));
+            else if (tabelaSelecionada === 'Atacado Premium') precoUnitario = parseFloat(option.getAttribute('data-premium'));
+            else precoUnitario = parseFloat(option.getAttribute('data-varejo'));
+
+            carrinho.push({
+                id: option.value,
+                nome: option.text,
+                cor: corDigitada,

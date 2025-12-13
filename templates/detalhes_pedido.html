@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pedido #{{ pedido.id }}</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; }
+        
+        /* Cabeçalho */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+        .logo h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+        .logo p { margin: 0; font-size: 14px; color: #666; }
+        .info-pedido { text-align: right; }
+        
+        /* Seções */
+        .section-title { font-size: 16px; font-weight: bold; background: #eee; padding: 5px 10px; margin-top: 20px; border-left: 5px solid #333; }
+        .cliente-info { margin-top: 10px; }
+        
+        /* Tabelas */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f9f9f9; }
+        .text-right { text-align: right; }
+        
+        /* Totais */
+        .totais { margin-top: 20px; text-align: right; }
+        .totais p { margin: 5px 0; }
+        .total-final { font-size: 18px; font-weight: bold; border-top: 2px solid #333; padding-top: 10px; }
+        
+        /* Botões (Não aparecem na impressão) */
+        .botoes-acao { margin-bottom: 20px; text-align: right; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; display: inline-block; }
+        .btn-print { background-color: #28a745; color: white; border: none; }
+        .btn-back { background-color: #6c757d; color: white; }
+
+        /* --- ESTILOS DE IMPRESSÃO (PDF) --- */
+        @media print {
+            body { background-color: white; }
+            .container { border: none; padding: 0; margin: 0; width: 100%; max-width: 100%; }
+            .botoes-acao { display: none !important; } /* Esconde os botões no PDF */
+            .section-title { background: none; border-bottom: 1px solid #ccc; padding-left: 0; }
+            a { text-decoration: none; color: #333; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="botoes-acao">
+        <a href="/pedidos" class="btn btn-back">&larr; Voltar</a>
+        <button onclick="window.print()" class="btn btn-print">🖨️ Imprimir / Salvar PDF</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>Ateliê Vanda Araújo</h1>
+                <p>Moda Praia em Macramê</p>
+            </div>
+            <div class="info-pedido">
+                <h3>PEDIDO #{{ pedido.id }}</h3>
+                <p>Data: {{ pedido.data_pedido.strftime('%d/%m/%Y') }}</p>
+                <p>Status: <strong>{{ pedido.status }}</strong></p>
+            </div>
+        </div>
+
+        <div class="section-title">DADOS DO CLIENTE</div>
+        <div class="cliente-info">
+            <p><strong>Nome:</strong> {{ pedido.cliente.nome }}</p>
+            <p><strong>Telefone:</strong> {{ pedido.cliente.telefone }}</p>
+            <p><strong>Endereço de Entrega:</strong> {{ pedido.cliente.endereco }} - {{ pedido.cliente.estado_uf }}</p>
+            <p><strong>Forma de Envio:</strong> {{ pedido.forma_envio }}</p>
+            <p><strong>Previsão de Entrega:</strong> {{ pedido.prazo_entrega.strftime('%d/%m/%Y') }}</p>
+        </div>
+
+        <div class="section-title">ITENS DO PEDIDO</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Cor</th> <th class="text-right">Qtd</th>
+                    <th class="text-right">Valor Unit.</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pedido.itens %}
+                <tr>
+                    <td>{{ item.produto.nome_produto }}</td>
+                    <td>{{ item.cor }}</td> <td class="text-right">{{ item.quantidade }}</td>
+                    <td class="text-right">R$ {{ "%.2f"|format(item.preco_unitario_na_venda) }}</td>
+                    <td class="text-right">R$ {{ "%.2f"|format(item.preco_unitario_na_venda * item.quantidade) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if pedido.custos_envios %}
+        <div class="section-title">TAXAS / FRETE</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th style="text-align: center;">Status</th> <th class="text-right">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for custo in pedido.custos_envios %}
+                <tr>
+                    <td>{{ custo.tipo_custo }}</td>
+                    <td style="text-align: center;">
+                        {% if custo.status == 'Pago' %}
+                            <span style="color: green; font-weight: bold;">PAGO</span>
+                        {% else %}
+                            <span style="color: #d9534f; font-weight: bold;">PENDENTE</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-right">R$ {{ "%.2f"|format(custo.valor) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        <div class="totais">
+            <p>Soma dos Produtos: R$ {{ "%.2f"|format(total_produtos) }}</p>
+            
+            {% if valor_desconto > 0 %}
+            <p style="color: #28a745;">(-) Desconto: R$ {{ "%.2f"|format(valor_desconto) }}</p>
+            {% endif %}
+            
+            <p style="font-weight: bold;">Total Produtos (Líquido): R$ {{ "%.2f"|format(total_produtos_liquido) }}</p>
+            
+            {% if total_taxas > 0 %}
+            <p>+ Total Taxas: R$ {{ "%.2f"|format(total_taxas) }}</p>
+            {% endif %}
+            
+            <div class="total-final">
+                TOTAL GERAL DO PEDIDO: R$ {{ "%.2f"|format(total_geral) }}
+            </div>
+        </div>
+
+        <div class="section-title">HISTÓRICO DE PAGAMENTOS</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th class="text-right">Valor Pago</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pag in pedido.pagamentos %}
+                <tr>
+                    <td>{{ pag.metodo }}</td>
+                    <td class="text-right">R$ {{ "%.2f"|format(pag.valor) }}</td>
+                </tr>
+                {% endfor %}
+                {% if not pedido.pagamentos %}
+                <tr>
+                    <td colspan="2" style="text-align:center; color: #777;">Nenhum pagamento registrado ainda.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <div class="totais">
+            <p>Total Pago: <strong>R$ {{ "%.2f"|format(total_pago) }}</strong></p>
+            
+            {% if valor_pendente > 0 %}
+                <p style="color: #dc3545; font-size: 16px; font-weight: bold;">RESTANTE A PAGAR: R$ {{ "%.2f"|format(valor_pendente) }}</p>
+            {% else %}
+                <p style="color: #28a745; font-size: 16px; font-weight: bold;">PEDIDO QUITADO</p>
+            {% endif %}
+        </div>
+        
+        <br><br>
+        <p style="text-align: center; font-size: 12px; color: #999;">Documento gerado eletronicamente pelo Sistema Ateliê Vanda Araújo.</p>
+
+    </div>
+</body>
+</html>

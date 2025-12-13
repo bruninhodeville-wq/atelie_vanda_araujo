@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Editar Itens - Pedido #{{ pedido.id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn-voltar { text-decoration: none; color: #6c757d; font-weight: bold; }
+        
+        /* Tabela de Itens Atuais */
+        .tabela-itens { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .tabela-itens th, .tabela-itens td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .btn-remove { color: red; font-weight: bold; text-decoration: none; font-size: 1.2em; }
+        
+        /* Formulário de Adicionar */
+        .box-add { background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin-top: 30px; display: flex; gap: 15px; align-items: flex-end; }
+        .btn-add { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; height: 45px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 15px; background: #d4edda; color: #155724; margin-bottom: 20px; border-radius: 4px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Gerenciar Itens do Pedido #{{ pedido.id }}</h1>
+            <a href="/pedidos" class="btn-voltar">Voltar à Lista</a>
+        </div>
+        <p>Cliente: <strong>{{ pedido.cliente.nome }}</strong> (Tabela: {{ pedido.cliente.tipo_cliente }})</p>
+
+        <hr>
+
+        <h3>Itens no Pedido</h3>
+        <table class="tabela-itens">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Preço Unit. (Venda)</th>
+                    <th>Subtotal</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pedido.itens %}
+                <tr>
+                    <td>{{ item.produto.nome_produto }}</td>
+                    <td>{{ item.quantidade }}</td>
+                    <td>R$ {{ "%.2f"|format(item.preco_unitario_na_venda) }}</td>
+                    <td>R$ {{ "%.2f"|format(item.preco_unitario_na_venda * item.quantidade) }}</td>
+                    <td>
+                        <form action="{{ url_for('remover_item_pedido', item_id=item.id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja remover este item?');">
+                            <button type="submit" style="background: none; border: none; cursor: pointer; color: red; font-weight: bold;">X Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 10px; font-size: 1.2em;">
+            <strong>Total Atual do Pedido: R$ {{ "%.2f"|format(total_atual) }}</strong>
+        </div>
+
+        <div class="box-add">
+            <form action="{{ url_for('adicionar_item_pedido', pedido_id=pedido.id) }}" method="POST" style="display: flex; gap: 15px; width: 100%; align-items: flex-end;">
+                <div style="flex: 3;">
+                    <label><strong>Adicionar Produto:</strong></label>
+                    <select name="produto_id" required style="width: 100%; padding: 10px;">
+                        <option value="" disabled selected>-- Escolha o Produto --</option>
+                        {% for produto in lista_produtos %}
+                            <option value="{{ produto.id }}">{{ produto.nome_produto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label><strong>Qtd:</strong></label>
+                    <input type="number" name="quantidade" value="1" min="1" style="width: 100%; padding: 10px;">
+                </div>
+                <div style="flex: 1;">
+                    <button type="submit" class="btn-add">+ Adicionar</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - Ateliê Vanda Araújo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    <h1>Bem-vindo ao Sistema do Ateliê!</h1>
+    <p>Moda Praia em Macramê</p>
+
+    <form action="/login" method="POST">
+        <h2>Faça seu Login</h2>
+        <div>
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Entrar</button>
+    </form>
+    
+    <p>Ainda não tem um usuário? <a href="/register">Registre-se aqui</a>.</p>
+</body>
+</html>

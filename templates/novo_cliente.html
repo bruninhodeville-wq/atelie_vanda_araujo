@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cadastrar Novo Cliente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .voltar:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+    <a href="/clientes" class="voltar">&larr; Voltar para Lista</a>
+
+    <h1>Cadastrar Novo Cliente</h1>
+    
+    <form action="/clientes/novo" method="POST">
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
+        <div>
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email">
+        </div>
+        <div>
+            <label for="endereco">Endereço:</label>
+            <input type="text" id="endereco" name="endereco" required>
+        </div>
+        <div>
+            <label for="estado_uf">Estado (UF):</label>
+            <input type="text" id="estado_uf" name="estado_uf" maxlength="2" required>
+        </div>
+        <div>
+            <label for="loja">Loja (Opcional):</label>
+            <input type="text" id="loja" name="loja">
+        </div>
+        <div>
+            <label for="tipo_cliente">Tipo de Cliente:</label>
+            <select id="tipo_cliente" name="tipo_cliente" required>
+                <option value="" disabled selected>-- Selecione uma opção --</option>
+                <option value="Atacado">Atacado</option>
+                <option value="Varejo">Varejo</option>
+                <option value="Atacarejo">Atacarejo</option>
+            </select>
+        </div>
+        
+        <button type="submit">Cadastrar Cliente</button>
+    </form>
+
+</body>
+</html>

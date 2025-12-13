@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Painel Principal - Ateliê</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    
+    <div style="max-width: 1200px; margin: 20px auto;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <h1>Olá, {{ session['username'] }}!</h1>
+    <p>Bem-vindo ao painel de controle do Ateliê.</p>
+    
+    <a href="/logout" class="logout">Sair (Logout)</a>
+    <hr>
+
+    <h2>O que você quer fazer?</h2>
+    
+    <div class="painel">
+        <a href="/clientes" class="botao-menu">
+            Clientes
+        </a>
+        <a href="/produtos" class="botao-menu">
+            Produtos
+        </a>
+        <a href="/pedidos" class="botao-menu">
+            Pedidos
+        </a>
+        <a href="/estoque" class="botao-menu">
+            Estoque (Em breve)
+        </a>
+        <a href="/dashboard" class="botao-menu">
+            Dashboard (Em breve)
+        </a>
+    </div>
+
+</body>
+</html>

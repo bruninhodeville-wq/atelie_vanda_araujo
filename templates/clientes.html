@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gerenciar Clientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar, .botao-novo {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .voltar:hover { background-color: #5a6268; }
+        
+        .botao-novo {
+            background-color: #007bff;
+            float: right; 
+        }
+        .botao-novo:hover { background-color: #0056b3; }
+        
+        .header-container {
+            overflow: hidden; 
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/home" class="voltar">&larr; Voltar ao Painel</a>
+
+    <div class="header-container">
+        <h2 style="float: left;">Clientes Cadastrados</h2>
+        
+        <a href="/clientes/novo" class="botao-novo">
+            + Cadastrar Novo Cliente
+        </a>
+    </div>
+    
+    <input type="text" placeholder="Buscar por nome, ID ou UF (em breve)..." style="width: 100%; margin-bottom: 20px;">
+
+    <div class="table-responsive">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">ID</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Nome</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Telefone</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Tipo</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">UF</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in lista_de_clientes %}
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ cliente.id }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ cliente.nome }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ cliente.telefone }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ cliente.tipo_cliente }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ cliente.estado_uf }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <a href="{{ url_for('editar_cliente', id=cliente.id) }}" style="color: #007bff; margin-right: 10px;">Editar</a>
+                        
+                        <a href="{{ url_for('deletar_cliente', id=cliente.id) }}" style="color: #dc3545;">Deletar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</body>
+</html>

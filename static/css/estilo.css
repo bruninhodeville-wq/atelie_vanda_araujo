@@ -1,0 +1,188 @@
+/* ===== VARIÁVEIS DE CORES (Paleta Suave) ===== */
+:root {
+    --fundo-geral: #f4f7f6;
+    --branco-puro: #ffffff;
+    --azul-principal: #007bff;
+    --azul-escuro: #0056b3;
+    --verde-sucesso: #28a745;
+    --vermelho-erro: #dc3545;
+    --cinza-texto: #333333;
+    --cinza-borda: #dddddd;
+    --sombra-suave: rgba(0, 0, 0, 0.1);
+}
+
+/* ===== RESET BÁSICO ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Garante que padding não estoure a largura */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--fundo-geral);
+    color: var(--cinza-texto);
+    padding: 10px; /* Espaço nas bordas em celulares */
+}
+
+/* ===== LINKS E BOTÕES GERAIS ===== */
+a { text-decoration: none; }
+
+.btn-link {
+    color: var(--azul-principal);
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+/* Botão Voltar Padrão */
+.voltar { 
+    display: inline-block; 
+    padding: 10px 15px; 
+    background-color: #6c757d; 
+    color: white; 
+    border-radius: 5px; 
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+/* ===== CONTAINERS (Onde fica o conteúdo) ===== */
+.container, .container-form {
+    background: var(--branco-puro);
+    padding: 20px; /* Reduzi um pouco para caber mais em telas pequenas */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--sombra-suave);
+    
+    /* Lógica de Largura Responsiva */
+    width: 100%;
+    max-width: 1000px; /* No PC trava em 1000px */
+    margin: 0 auto 20px auto; /* Centraliza */
+}
+
+h1, h2, h3 {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+h1 { font-size: 1.8rem; text-align: center; }
+h2 { font-size: 1.4rem; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 20px;}
+
+/* ===== FORMULÁRIOS E INPUTS ===== */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px; /* Área de toque maior para celular */
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-size: 1rem; /* Fonte legível no celular */
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+input:focus, select:focus {
+    border-color: var(--azul-principal);
+    outline: none;
+}
+
+/* ===== SISTEMA DE GRID (LINHAS E COLUNAS) ===== */
+.row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end; /* Alinha inputs com botões */
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Permite quebrar linha se não couber */
+}
+
+.col {
+    flex: 1; /* Tenta ocupar espaço igual */
+    min-width: 200px; /* Se ficar menor que 200px, joga pra linha de baixo */
+}
+
+/* ===== TABELAS (RESPONSIVIDADE É CRÍTICA AQUI) ===== */
+/* Cria uma barra de rolagem horizontal APENAS na tabela se ela for muito larga */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 15px;
+    border: 1px solid #eee;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Força a tabela a ter um tamanho mínimo para não espremer */
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th { background-color: #f8f9fa; font-weight: bold; }
+
+/* ===== BOTÕES DE AÇÃO ===== */
+button[type="submit"], .btn-add {
+    background-color: var(--verde-sucesso);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+    width: 100%; /* No mobile, botões ocupam a largura toda */
+}
+
+button:hover { opacity: 0.9; }
+
+.btn-add {
+    background-color: var(--azul-principal);
+    height: 48px; /* Altura fixa para alinhar com inputs */
+    margin-bottom: 10px; /* Ajuste visual */
+}
+
+.btn-remove {
+    color: var(--vermelho-erro);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 10px;
+    background: #ffe6e6;
+    border-radius: 4px;
+}
+
+/* ===== AJUSTES ESPECÍFICOS PARA CELULAR (MEDIA QUERY) ===== */
+@media (max-width: 768px) {
+    
+    /* Transforma as linhas (.row) em colunas empilhadas */
+    .row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .col {
+        width: 100%; /* Ocupa 100% da tela */
+        margin-bottom: 15px;
+    }
+    
+    /* Botões ficam grandes para facilitar o toque */
+    .btn-add, button[type="submit"], .voltar {
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Ajuste de fontes */
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    
+    /* Remove padding excessivo */
+    .container { padding: 15px; }
+}

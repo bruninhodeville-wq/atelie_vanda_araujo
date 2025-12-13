@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gerenciar Pedidos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar, .botao-novo {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .voltar:hover { background-color: #5a6268; }
+        
+        .botao-novo {
+            background-color: #28a745; /* Verde para destacar venda */
+            float: right;
+        }
+        .botao-novo:hover { background-color: #218838; }
+        
+        .header-container { overflow: hidden; margin-bottom: 20px; }
+
+        /* Estilos para Status */
+        .status-pendente { color: #856404; background-color: #fff3cd; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .status-concluido { color: #155724; background-color: #d4edda; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <a href="/home" class="voltar">&larr; Voltar ao Painel</a>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 15px; margin-bottom: 20px; background-color: #d4edda; color: #155724; border-radius: 4px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header-container">
+        <h2 style="float: left;">Pedidos Realizados</h2>
+        <a href="/pedidos/novo" class="botao-novo">+ Novo Pedido</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Data</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Cliente</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Forma Envio</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Status</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in lista_de_pedidos %}
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">#{{ pedido.id }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{{ pedido.data_pedido.strftime('%d/%m/%Y') }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ pedido.cliente.nome }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{{ pedido.forma_envio }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                    <span class="status-{{ pedido.status|lower }}">{{ pedido.status }}</span>
+                </td>
+                <<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
+                    <a href="{{ url_for('detalhes_pedido', id=pedido.id) }}" style="color: #007bff; margin-right: 8px; text-decoration: none;" title="Ver Nota">📄</a>
+                    
+                    <a href="{{ url_for('gerenciar_itens', id=pedido.id) }}" style="color: #17a2b8; margin-right: 8px; text-decoration: none;" title="Gerenciar Itens">🛒</a>
+
+                    <a href="{{ url_for('editar_pedido', id=pedido.id) }}" style="color: #ffc107; margin-right: 8px; text-decoration: none;" title="Editar Status">✏️</a>
+
+                    <a href="{{ url_for('deletar_pedido', id=pedido.id) }}" style="color: #dc3545; font-weight: bold; text-decoration: none;" title="Excluir Pedido">🗑️</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="padding: 20px; text-align: center; color: #777;">
+                    Nenhum pedido cadastrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

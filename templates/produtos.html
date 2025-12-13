@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gerenciar Produtos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar, .botao-novo {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .voltar:hover { background-color: #5a6268; }
+        
+        .botao-novo {
+            background-color: #007bff;
+            float: right;
+        }
+        .botao-novo:hover { background-color: #0056b3; }
+        
+        .header-container { overflow: hidden; margin-bottom: 20px; }
+
+        /* Ajuste para tabela com muitas colunas: fonte um pouco menor */
+        table th, table td {
+            font-size: 0.9em; 
+            text-align: center; /* Centraliza os valores para ficar mais bonito */
+        }
+        table td:nth-child(2) {
+            text-align: left; /* Mantém o nome do produto alinhado à esquerda */
+        }
+    </style>
+</head>
+<body>
+    <a href="/home" class="voltar">&larr; Voltar ao Painel</a>
+
+    <div class="header-container">
+        <h2 style="float: left;">Produtos Cadastrados</h2>
+        <a href="/produtos/novo" class="botao-novo">+ Cadastrar Novo Produto</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Produto</th>
+                
+                <th style="padding: 8px; border: 1px solid #ddd;">Varejo</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Atacado</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Atacarejo</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Premium</th>
+                
+                <th style="padding: 8px; border: 1px solid #ddd;">Custo</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Tempo (h)</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in lista_de_produtos %}
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.id }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.nome_produto }}</td>
+                
+                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_varejo) }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacado) }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacarejo) }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacado_premium) }}</td>
+                
+                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.custo_producao) }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.tempo_producao }}</td>
+                
+                <td style="padding: 8px; border: 1px solid #ddd;">
+                    <a href="{{ url_for('editar_produto', id=produto.id) }}" style="color: #007bff; margin-right: 5px;">Editar</a>
+                    <a href="{{ url_for('deletar_produto', id=produto.id) }}" style="color: #dc3545;">Deletar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

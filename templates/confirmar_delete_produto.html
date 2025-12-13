@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Excluir Produto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .box-aviso {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .btn-deletar {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-cancelar {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h1>Excluir Produto</h1>
+
+    <div class="box-aviso">
+        <h3>⚠️ Atenção!</h3>
+        <p>Você está prestes a excluir o produto: <strong>{{ produto.nome_produto }}</strong>.</p>
+        <p>Isso removerá o produto do estoque e das listas de novos pedidos.</p>
+    </div>
+
+    <form action="{{ url_for('deletar_produto', id=produto.id) }}" method="POST">
+        <div>
+            <label for="password">Digite sua SENHA para confirmar:</label>
+            <input type="password" id="password" name="password" required placeholder="Sua senha de login">
+        </div>
+        <br>
+        
+        <button type="submit" class="btn-deletar">Confirmar Exclusão</button>
+        <a href="/produtos" class="btn-cancelar">Cancelar</a>
+    </form>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Editar Cliente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .voltar {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .voltar:hover { background-color: #5a6268; }
+    </style>
+</head>
+<body>
+    <a href="/clientes" class="voltar">&larr; Voltar para Lista</a>
+
+    <form action="{{ url_for('editar_cliente', id=cliente.id) }}" method="POST">
+        
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" value="{{ cliente.nome }}" required>
+        </div>
+        <div>
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" value="{{ cliente.telefone }}" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" value="{{ cliente.email }}">
+        </div>
+        <div>
+            <label for="endereco">Endereço:</label>
+            <input type="text" id="endereco" name="endereco" value="{{ cliente.endereco }}" required>
+        </div>
+        <div>
+            <label for="estado_uf">Estado (UF):</label>
+            <input type="text" id="estado_uf" name="estado_uf" maxlength="2" value="{{ cliente.estado_uf }}" required>
+        </div>
+        <div>
+            <label for="loja">Loja (Opcional):</label>
+            <input type="text" id="loja" name="loja" value="{{ cliente.loja }}">
+        </div>
+        <div>
+            <label for="tipo_cliente">Tipo de Cliente:</label>
+            <select id="tipo_cliente" name="tipo_cliente" required>
+                <option value="Atacado" {% if cliente.tipo_cliente == 'Atacado' %}selected{% endif %}>Atacado</option>
+                <option value="Varejo" {% if cliente.tipo_cliente == 'Varejo' %}selected{% endif %}>Varejo</option>
+                <option value="Atacarejo" {% if cliente.tipo_cliente == 'Atacarejo' %}selected{% endif %}>Atacarejo</option>
+            </select>
+        </div>
+        
+        <button type="submit">Salvar Alterações</button>
+    </form>
+
+</body>
+</html>
