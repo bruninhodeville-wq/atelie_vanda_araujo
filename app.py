@@ -18,7 +18,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.wsgi_app = WhiteNoise(
     app.wsgi_app, 
     root=os.path.join(basedir, 'static'), 
-    prefix='static/'
+    prefix='/static/'
 )
 
 app.config['SECRET_KEY'] = 'sua-chave-secreta-muito-dificil'
