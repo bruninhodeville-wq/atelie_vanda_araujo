@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Acompanhar Pedidos - Ateliê</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    <div class="home-section">
+        <div class="text">Acompanhar Pedidos</div>
+        <div class="container">
+            <h1>Lista de Pedidos para Acompanhamento</h1>
+            <p style="text-align: center; color: #666;">Aqui você poderá ver o status e detalhes de todos os pedidos.</p>
+            
+            <div class="table-responsive">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">ID</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Cliente</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Data</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Status</th>
+                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">#123</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">João Silva</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">15/12/2023</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;"><span style="background: #ffc107; padding: 3px 8px; border-radius: 10px; font-size: 0.9em;">Pendente</span></td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
+                                <a href="#" class="btn-link">Ver Detalhes</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">#124</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">Maria Oliveira</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">14/12/2023</td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;"><span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.9em;">Concluído</span></td>
+                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
+                                <a href="#" class="btn-link">Ver Detalhes</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    </body>
+</html>

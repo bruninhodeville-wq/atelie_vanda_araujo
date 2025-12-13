@@ -178,6 +178,13 @@ def home():
         return redirect(url_for('login'))
     return render_template('home.html')
 
+@app.route('/acompanhar_pedidos')
+def acompanhar_pedidos():
+    if 'user_id' not in session:
+        flash('Você precisa fazer login.', 'warning')
+        return redirect(url_for('login'))
+    return render_template('acompanhar_pedido.html')
+
 # --- CLIENTES ---
 @app.route('/clientes', methods=['GET'])
 def clientes():
