@@ -1,85 +1,116 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gerenciar Produtos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
-    <style>
-        .voltar, .botao-novo {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .voltar:hover { background-color: #5a6268; }
-        
-        .botao-novo {
-            background-color: #007bff;
-            float: right;
-        }
-        .botao-novo:hover { background-color: #0056b3; }
-        
-        .header-container { overflow: hidden; margin-bottom: 20px; }
+{% extends "base.html" %}
 
-        /* Ajuste para tabela com muitas colunas: fonte um pouco menor */
-        table th, table td {
-            font-size: 0.9em; 
-            text-align: center; /* Centraliza os valores para ficar mais bonito */
-        }
-        table td:nth-child(2) {
-            text-align: left; /* Mantém o nome do produto alinhado à esquerda */
-        }
-    </style>
-</head>
-<body>
-    <a href="/home" class="voltar">&larr; Voltar ao Painel</a>
+{% block title %}Catálogo de Produtos{% endblock %}
 
-    <div class="header-container">
-        <h2 style="float: left;">Produtos Cadastrados</h2>
-        <a href="/produtos/novo" class="botao-novo">+ Cadastrar Novo Produto</a>
+{% block content %}
+<div class="container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h1 style="border: none; margin-bottom: 5px;">Catálogo de Produtos</h1>
+            <p style="color: #888; font-size: 0.95rem;">Gerencie os preços, custos e tempo de produção.</p>
+        </div>
+        <a href="{{ url_for('novo_produto') }}" class="btn-gradiente" style="width: auto; padding: 12px 25px; margin-top: 0; box-shadow: 0 4px 10px rgba(255, 0, 255, 0.3); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <i class='bx bx-plus'></i> Novo Produto
+        </a>
     </div>
 
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr style="background-color: #f2f2f2;">
-                <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Produto</th>
-                
-                <th style="padding: 8px; border: 1px solid #ddd;">Varejo</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Atacado</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Atacarejo</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Premium</th>
-                
-                <th style="padding: 8px; border: 1px solid #ddd;">Custo</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Tempo (h)</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for produto in lista_de_produtos %}
-            <tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.id }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.nome_produto }}</td>
-                
-                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_varejo) }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacado) }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacarejo) }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.preco_atacado_premium) }}</td>
-                
-                <td style="padding: 8px; border: 1px solid #ddd;">R$ {{ "%.2f"|format(produto.custo_producao) }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ produto.tempo_producao }}</td>
-                
-                <td style="padding: 8px; border: 1px solid #ddd;">
-                    <a href="{{ url_for('editar_produto', id=produto.id) }}" style="color: #007bff; margin-right: 5px;">Editar</a>
-                    <a href="{{ url_for('deletar_produto', id=produto.id) }}" style="color: #dc3545;">Deletar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+    <div style="background: #fafafa; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #f0f0f0;">
+        <div style="position: relative;">
+            <i class='bx bx-search' style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa;"></i>
+            <input type="text" id="filtroTabela" onkeyup="filtrarTabela()" placeholder="Buscar produto por nome..." 
+                   style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 50px; border: 1px solid #e0e0e0; outline: none; margin-bottom: 0;">
+        </div>
+    </div>
+
+    <div class="table-responsive" style="box-shadow: none; border: 1px solid #eee;">
+        <table id="tabelaProdutos">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">ID</th>
+                    <th>Nome do Produto</th>
+                    <th>Varejo</th>
+                    <th>Atacado</th>
+                    <th>Custo</th>
+                    <th>Tempo</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in lista_de_produtos %}
+                <tr style="transition: background 0.2s;">
+                    <td style="font-weight: bold; color: var(--roxo-profundo);">#{{ produto.id }}</td>
+                    <td style="font-weight: 500; font-size: 1.05rem;">{{ produto.nome_produto }}</td>
+                    
+                    <td style="color: #333; font-weight: 600;">R$ {{ "%.2f"|format(produto.preco_varejo) }}</td>
+                    <td style="color: #666;">R$ {{ "%.2f"|format(produto.preco_atacado) }}</td>
+                    <td style="color: #888; font-size: 0.9rem;">R$ {{ "%.2f"|format(produto.custo_producao) }}</td>
+                    
+                    <td>
+                        <span style="background: #e3f2fd; color: #1565c0; padding: 3px 8px; border-radius: 10px; font-size: 0.85rem;">
+                            {{ produto.tempo_producao }}h
+                        </span>
+                    </td>
+                    
+                    <td style="text-align: center;">
+                        <div style="display: inline-flex; gap: 8px;">
+                            <a href="{{ url_for('editar_produto', id=produto.id) }}" class="btn-icon btn-editar" title="Editar Produto">
+                                <i class='bx bx-edit-alt'></i>
+                            </a>
+                            <a href="{{ url_for('deletar_produto', id=produto.id) }}" class="btn-icon btn-excluir" title="Excluir Produto">
+                                <i class='bx bx-trash'></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                        <i class='bx bx-package' style="font-size: 3rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                        Nenhum produto cadastrado no catálogo.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .btn-icon {
+        width: 35px; height: 35px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 1.1rem;
+    }
+    
+    .btn-editar { background: #fff0f5; color: var(--magenta-neon); }
+    .btn-editar:hover { background: var(--magenta-neon); color: white; transform: translateY(-2px); }
+    
+    .btn-excluir { background: #fff; color: #ddd; border: 1px solid #eee; }
+    .btn-excluir:hover { background: #ffebee; color: #d32f2f; border-color: #ffcdd2; transform: translateY(-2px); }
+</style>
+
+<script>
+function filtrarTabela() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filtroTabela");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("tabelaProdutos");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1]; // Coluna Nome (índice 1)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+{% endblock %}
