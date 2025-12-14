@@ -108,17 +108,40 @@ a { text-decoration: none; }
 .sidebar li a.active i, .sidebar li a.active .links_name { color: #fff !important; }
 
 /* --- CORREÇÃO DO LOGOUT CORTADO --- */
+/* Área de Logout (Ajustada para não cortar) */
 .sidebar li.profile {
-    position: fixed; 
-    height: 60px; 
-    width: 78px; 
-    left: 0; 
-    bottom: 0; /* CORRIGIDO: Era -8px, agora é 0 para não cortar */
-    padding: 10px 14px; 
+    position: fixed;
+    height: 80px; /* Aumentei de 60px para 80px para dar mais respiro */
+    width: 78px;
+    left: 0;
+    bottom: 0; /* Garante que fique exatamente no rodapé */
+    padding: 15px 14px; /* Ajustei o espaçamento interno */
     background: #5a005a;
-    transition: all 0.5s ease; 
+    transition: all 0.5s ease;
     overflow: hidden;
+    z-index: 100; /* Garante que fique acima de tudo */
 }
+
+/* Centraliza o ícone de sair quando o menu está fechado */
+.sidebar li.profile #log_out {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: #5a005a;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 0px;
+    transition: all 0.5s ease;
+    text-align: center; /* Garante alinhamento */
+}
+
+/* Ajustes quando abre o menu */
+.sidebar.open li.profile { width: 250px; }
+.sidebar.open li.profile #log_out { width: 50px; background: none; }
+.sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
+.sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
 .sidebar.open li.profile { width: 250px; }
 .sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
 .sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
