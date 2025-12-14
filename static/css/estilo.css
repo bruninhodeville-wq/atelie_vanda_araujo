@@ -240,3 +240,51 @@ tr:hover { background-color: #fff5ff; } /* Hover rosa bem clarinho */
     .sidebar.open ~ .home-section { left: 0; width: 100%; opacity: 0.5; pointer-events: none; }
     #btn { display: block; position: fixed; top: 15px; left: 15px; background: var(--roxo-profundo); border-radius: 5px; padding: 5px; z-index: 1000; color: white;}
 }
+
+/* ===== ALERTAS E NOTIFICAÇÕES ===== */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 12px; /* Bordas arredondadas */
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    animation: slideDown 0.5s ease forwards;
+    width: 100%;
+    max-width: 1100px; /* Mesma largura dos containers */
+    margin: 0 auto 20px auto; /* Centraliza */
+}
+
+/* Tipos de Alerta */
+.alert-success {
+    background-color: #e8f5e9; /* Fundo verde claro */
+    color: #2e7d32; /* Texto verde escuro */
+    border-left: 5px solid #28a745; /* Faixa lateral */
+}
+
+.alert-danger {
+    background-color: #ffebee; /* Fundo vermelho claro */
+    color: #c62828;
+    border-left: 5px solid #dc3545;
+}
+
+.alert-warning {
+    background-color: #fff8e1; /* Fundo amarelo claro */
+    color: #f57f17;
+    border-left: 5px solid #ffc107;
+}
+
+.alert-info {
+    background-color: #e3f2fd; /* Fundo azul claro */
+    color: #1565c0;
+    border-left: 5px solid #2196f3;
+}
+
+/* Animação suave */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

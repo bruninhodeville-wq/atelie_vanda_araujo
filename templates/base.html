@@ -4,73 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Ateliê System{% endblock %}</title>
-    
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 </head>
 <body>
 
     <div class="sidebar">
         <div class="logo-details">
+            <i class='bx bx-spa icon'></i>
             <div class="logo_name">Ateliê Vanda</div>
             <i class='bx bx-menu' id="btn"></i>
         </div>
         <ul class="nav-list">
-            <li>
-                <a href="/home">
-                    <i class='bx bx-home'></i>
-                    <span class="links_name">Home</span>
-                </a>
-                <span class="tooltip">Home</span>
-            </li>
-            
-            <li>
-                <a href="/pedidos/novo">
-                    <i class='bx bx-cart-add'></i>
-                    <span class="links_name">Novo Pedido</span>
-                </a>
-                <span class="tooltip">Novo Pedido</span>
-            </li>
-
-            <li>
-                <a href="/pedidos">
-                    <i class='bx bx-list-ul'></i>
-                    <span class="links_name">Ver Pedidos</span>
-                </a>
-                <span class="tooltip">Ver Pedidos</span>
-            </li>
-
-            <li>
-                <a href="/acompanhar_pedidos">
-                    <i class='bx bx-list-check'></i>
-                    <span class="links_name">Acompanhar</span>
-                </a>
-                <span class="tooltip">Acompanhar</span>
-            </li>
-
-            <li>
-                <a href="/clientes">
-                    <i class='bx bx-user'></i>
-                    <span class="links_name">Clientes</span>
-                </a>
-                <span class="tooltip">Clientes</span>
-            </li>
-
-            <li>
-                <a href="/produtos">
-                    <i class='bx bx-package'></i>
-                    <span class="links_name">Produtos</span>
-                </a>
-                <span class="tooltip">Produtos</span>
-            </li>
-            
+            <li><a href="/home"><i class='bx bx-home'></i><span class="links_name">Home</span></a><span class="tooltip">Home</span></li>
+            <li><a href="/pedidos/novo"><i class='bx bx-cart-add'></i><span class="links_name">Novo Pedido</span></a><span class="tooltip">Novo Pedido</span></li>
+            <li><a href="/pedidos"><i class='bx bx-list-ul'></i><span class="links_name">Ver Pedidos</span></a><span class="tooltip">Ver Pedidos</span></li>
+            <li><a href="/acompanhar_pedidos"><i class='bx bx-list-check'></i><span class="links_name">Acompanhar</span></a><span class="tooltip">Acompanhar</span></li>
+            <li><a href="/clientes"><i class='bx bx-user'></i><span class="links_name">Clientes</span></a><span class="tooltip">Clientes</span></li>
+            <li><a href="/produtos"><i class='bx bx-package'></i><span class="links_name">Produtos</span></a><span class="tooltip">Produtos</span></li>
             <li class="profile">
                 <div class="profile-details">
-                    <div class="name_job">
-                        <div class="name">{{ session['username'] }}</div>
-                        <div class="job">Logado</div>
-                    </div>
+                    <div class="name_job"><div class="name">{{ session['username'] }}</div><div class="job">Logado</div></div>
                 </div>
                 <a href="/logout"><i class='bx bx-log-out' id="log_out"></i></a>
             </li>
@@ -78,6 +32,22 @@
     </div>
 
     <section class="home-section">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div style="padding: 0 40px;"> {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                 {% if category == 'success' %}<i class='bx bx-check-circle' style="font-size: 1.2rem;"></i>
+                 {% elif category == 'danger' %}<i class='bx bx-error-circle' style="font-size: 1.2rem;"></i>
+                 {% else %}<i class='bx bx-info-circle' style="font-size: 1.2rem;"></i>{% endif %}
+                 
+                 {{ message }}
+              </div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
         
         <footer style="text-align: center; padding: 20px; color: #999; font-size: 0.8rem; margin-top: 40px;">
@@ -86,15 +56,12 @@
     </section>
 
     <script>
-        // Lógica para abrir/fechar o menu lateral
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
-
         closeBtn.addEventListener("click", ()=>{
             sidebar.classList.toggle("open");
             menuBtnChange();
         });
-
         function menuBtnChange() {
             if(sidebar.classList.contains("open")){
                 closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
@@ -102,17 +69,22 @@
                 closeBtn.classList.replace("bx-menu-alt-right","bx-menu");
             }
         }
-
-        // Lógica para ACENDER (Destacar) o item do menu atual
         const currentLocation = location.pathname;
         const menuItems = document.querySelectorAll('.nav-list li a');
-        
         menuItems.forEach(item => {
-            // Se o link for igual à URL atual, adiciona a classe .active
             if(item.getAttribute('href') === currentLocation){
                 item.classList.add('active');
             }
         });
+        
+        // Auto-fechar alertas após 5 segundos (Opcional, mas recomendado)
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.style.display = 'none', 500);
+            });
+        }, 5000);
     </script>
 </body>
 </html>
