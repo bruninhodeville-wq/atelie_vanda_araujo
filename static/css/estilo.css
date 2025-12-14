@@ -1,4 +1,4 @@
-/* ===== VARIÁVEIS DE CORES (Paleta Vibrante Roxa/Neon) ===== */
+/* ===== VARIÁVEIS DE CORES (Paleta Vibrante) ===== */
 :root {
     --roxo-profundo: #800080;
     --magenta-neon: #ff00ff;
@@ -6,12 +6,10 @@
     --turquesa: #40e0d0;
     --verde-mar: #20b2aa;
     
-    /* Variáveis Funcionais */
     --fundo-geral: #f4f7f6;
     --branco-puro: #ffffff;
     --sidebar-bg: var(--roxo-profundo);
     --sidebar-text: #ffffff;
-    --cinza-texto: #333333;
     --sombra-suave: 0 4px 15px rgba(128, 0, 128, 0.15);
 }
 
@@ -21,7 +19,7 @@
 body {
     background-color: var(--fundo-geral);
     min-height: 100vh;
-    display: flex; /* Essencial para o layout Sidebar + Conteúdo */
+    display: flex;
 }
 
 a { text-decoration: none; }
@@ -50,6 +48,8 @@ a { text-decoration: none; }
 
 .sidebar ul { margin-top: 20px; }
 .sidebar li { position: relative; margin: 8px 0; list-style: none; }
+
+/* Links do Menu */
 .sidebar li a {
     display: flex; height: 100%; width: 100%; border-radius: 12px;
     align-items: center; text-decoration: none; transition: all 0.4s ease;
@@ -69,79 +69,74 @@ a { text-decoration: none; }
     text-align: center; line-height: 60px;
 }
 
-/* Item Ativo (Destaque Magenta) */
+/* --- CORREÇÃO DOS NOMES PRETOS (TOOLTIPS) --- */
+.sidebar li .tooltip {
+    position: absolute; 
+    top: -20px; 
+    left: calc(100% + 15px);
+    z-index: 3; 
+    background: #fff; 
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    padding: 6px 12px; 
+    border-radius: 4px; 
+    font-size: 15px;
+    font-weight: 400; 
+    opacity: 0; 
+    white-space: nowrap; 
+    pointer-events: none;
+    transition: 0s; 
+    color: #333;
+    display: block;
+}
+
+.sidebar li:hover .tooltip {
+    opacity: 1; 
+    top: 50%; 
+    transform: translateY(-50%);
+}
+
+/* SE O MENU ESTIVER ABERTO, ESCONDE OS TOOLTIPS (Aqui estava o problema) */
+.sidebar.open li .tooltip {
+    display: none !important; 
+}
+
+/* Item Ativo */
 .sidebar li a.active {
     background: var(--magenta-neon);
     box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
 }
 .sidebar li a.active i, .sidebar li a.active .links_name { color: #fff !important; }
 
-/* Área de Logout */
+/* --- CORREÇÃO DO LOGOUT CORTADO --- */
 .sidebar li.profile {
-    position: fixed; height: 60px; width: 78px; left: 0; bottom: -8px;
-    padding: 10px 14px; background: #5a005a;
-    transition: all 0.5s ease; overflow: hidden;
+    position: fixed; 
+    height: 60px; 
+    width: 78px; 
+    left: 0; 
+    bottom: 0; /* CORRIGIDO: Era -8px, agora é 0 para não cortar */
+    padding: 10px 14px; 
+    background: #5a005a;
+    transition: all 0.5s ease; 
+    overflow: hidden;
 }
 .sidebar.open li.profile { width: 250px; }
 .sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
 .sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
 
-/* ===== CONTEÚDO PRINCIPAL (CORREÇÃO DE LAYOUT) ===== */
+/* ===== LAYOUT GERAL ===== */
 .home-section {
-    position: relative; 
-    background: var(--fundo-geral); 
-    min-height: 100vh;
-    top: 0; 
-    left: 78px; /* O Pulo do Gato: Empurra o conteúdo para a direita */
-    width: calc(100% - 78px);
-    transition: all 0.5s ease; 
-    z-index: 2; 
-    padding: 40px;
+    position: relative; background: var(--fundo-geral); min-height: 100vh;
+    top: 0; left: 78px; width: calc(100% - 78px);
+    transition: all 0.5s ease; z-index: 2; padding: 40px;
 }
 .sidebar.open ~ .home-section { left: 250px; width: calc(100% - 250px); }
 
-/* ===== CONTAINERS, FORMULÁRIOS E TABELAS ===== */
 .container, .container-form {
-    background: var(--branco-puro);
-    padding: 30px; border-radius: 12px;
-    box-shadow: 0 4px 15px var(--sombra-suave);
-    width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
+    background: var(--branco-puro); padding: 30px; border-radius: 12px;
+    box-shadow: 0 4px 15px var(--sombra-suave); width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
 }
 
-h1 { color: var(--roxo-profundo); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-h2 { color: var(--cinza-texto); margin-top: 20px; font-size: 1.3rem; }
-
-/* Inputs e Selects */
-input, select, textarea {
-    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;
-    font-size: 1rem;
-}
-input:focus, select:focus { border-color: var(--roxo-profundo); outline: none; }
-
-/* Botões Gerais */
-button[type="submit"], .btn-custom {
-    background-color: var(--verde-mar); color: white; padding: 12px 20px; border: none;
-    border-radius: 6px; font-size: 1rem; cursor: pointer; transition: 0.3s;
-}
-button:hover { opacity: 0.9; }
-
-/* Botão Voltar (Correção Visual) */
-.voltar {
-    display: inline-block; padding: 8px 15px; background: #999; color: white;
-    border-radius: 5px; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px;
-}
-
-/* Tabelas Responsivas */
-.table-responsive { overflow-x: auto; width: 100%; border: 1px solid #eee; border-radius: 6px; }
-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-th { background: var(--verde-mar); color: white; padding: 12px; text-align: left; }
-td { padding: 12px; border-bottom: 1px solid #eee; }
-
-/* Grid System Simples */
-.row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
-.col { flex: 1; min-width: 200px; }
-
-/* Responsividade Mobile */
+/* Responsividade */
 @media (max-width: 768px) {
     .sidebar { width: 0; padding: 0; }
     .sidebar.open { width: 250px; padding: 6px 14px; }
