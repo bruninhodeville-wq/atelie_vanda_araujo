@@ -41,14 +41,28 @@
 
         <div id="info_cliente" style="background: #fdf2ff; padding: 15px; border-radius: 15px; border: 1px dashed var(--magenta-neon); display: none; margin-bottom: 20px; color: #555;">
             <strong>Cliente Selecionado:</strong> <span id="span_nome">---</span> <br>
-            Tipo: <span id="span_tipo">---</span>
+            <strong>Tabela Padrão:</strong> <span id="span_tipo">---</span>
         </div>
 
         <div class="form-section-title">
             <i class='bx bx-shopping-bag'></i> 2. Adicionar Produtos
         </div>
 
-        <div style="background: #fafafa; padding: 20px; border-radius: 20px; margin-bottom: 20px;">
+        <div style="background: #fafafa; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #eee;">
+            
+            <div class="row" style="margin-bottom: 15px;">
+                <div class="col">
+                    <label style="color: var(--roxo-profundo); font-weight: bold;">Tabela de Preço para este item:</label>
+                    <select id="tabela_preco_select" style="border-color: var(--magenta-neon);">
+                        <option value="Varejo">Varejo</option>
+                        <option value="Atacado">Atacado</option>
+                        <option value="Atacarejo">Atacarejo</option>
+                        <option value="Atacado Premium">Atacado Premium</option>
+                    </select>
+                </div>
+                <div class="col" style="flex: 2;"></div> 
+            </div>
+
             <div class="row">
                 <div class="col" style="flex: 2;">
                     <label>Produto:</label>
@@ -88,6 +102,7 @@
                     <tr>
                         <th>Produto</th>
                         <th>Cor</th>
+                        <th>Tabela</th>
                         <th>Preço Unit.</th>
                         <th>Qtd</th>
                         <th>Subtotal</th>
@@ -135,10 +150,11 @@
         renderizarCarrinho();
     }
 
-    // Identificar Cliente (Lógica de Preço)
+    // 1. Identificar Cliente e selecionar Tabela Automaticamente
     const buscaInput = document.getElementById('busca_cliente');
     const hiddenId = document.getElementById('cliente_id_hidden');
     const infoDiv = document.getElementById('info_cliente');
+    const tabelaSelect = document.getElementById('tabela_preco_select'); // Novo Select
     
     buscaInput.addEventListener('input', function() {
         const val = this.value;
@@ -147,9 +163,21 @@
             if (opts[i].value === val) {
                 hiddenId.value = opts[i].getAttribute('data-id');
                 const tipo = opts[i].getAttribute('data-tipo');
+                
+                // Atualiza visual
                 document.getElementById('span_nome').innerText = val;
                 document.getElementById('span_tipo').innerText = tipo;
                 infoDiv.style.display = 'block';
+                
+                // ATUALIZA O SELECT DE PREÇO AUTOMATICAMENTE
+                // Tenta selecionar a opção que bate com o tipo do cliente
+                // Se não existir (ex: erro de cadastro), mantém o que estava ou Varejo
+                for(let j=0; j < tabelaSelect.options.length; j++){
+                    if(tabelaSelect.options[j].value === tipo){
+                        tabelaSelect.selectedIndex = j;
+                        break;
+                    }
+                }
                 return;
             }
         }
@@ -157,27 +185,41 @@
         infoDiv.style.display = 'none';
     });
     
-    // Dispara evento se já tiver valor (edição)
     if(buscaInput.value) { buscaInput.dispatchEvent(new Event('input')); }
 
+    // 2. Adicionar ao Carrinho usando a Tabela Selecionada
     function adicionarAoCarrinho() {
         const sel = document.getElementById('produto_select');
         const opt = sel.options[sel.selectedIndex];
+        
         if(!opt.value) { alert("Escolha um produto"); return; }
         
-        // Define preço baseado no tipo do cliente
-        let preco = parseFloat(opt.getAttribute('data-varejo'));
-        const tipoCli = document.getElementById('span_tipo').innerText;
+        // Pega a tabela que o usuário escolheu no momento
+        const tabelaEscolhida = document.getElementById('tabela_preco_select').value;
         
-        if(tipoCli === 'Atacado') preco = parseFloat(opt.getAttribute('data-atacado'));
-        else if(tipoCli === 'Atacarejo') preco = parseFloat(opt.getAttribute('data-atacarejo'));
-        else if(tipoCli === 'Atacado Premium') preco = parseFloat(opt.getAttribute('data-premium'));
+        let preco = 0;
+        
+        // Pega o preço correspondente dos dados do produto
+        if(tabelaEscolhida === 'Atacado') {
+            preco = parseFloat(opt.getAttribute('data-atacado'));
+        } else if(tabelaEscolhida === 'Atacarejo') {
+            preco = parseFloat(opt.getAttribute('data-atacarejo'));
+        } else if(tabelaEscolhida === 'Atacado Premium') {
+            preco = parseFloat(opt.getAttribute('data-premium'));
+        } else {
+            // Padrão Varejo
+            preco = parseFloat(opt.getAttribute('data-varejo'));
+        }
+
+        // Validação de segurança caso preço venha zerado ou NaN
+        if(isNaN(preco)) preco = 0;
 
         const item = {
             id: opt.value,
             nome: opt.text.trim(),
             cor: document.getElementById('cor_input').value,
             qty: parseInt(document.getElementById('qty_input').value),
+            tabela: tabelaEscolhida, // Salvamos qual tabela foi usada
             preco: preco,
             subtotal: preco * parseInt(document.getElementById('qty_input').value)
         };
@@ -202,10 +244,12 @@
         
         carrinho.forEach((item, index) => {
             total += item.subtotal;
+            // Adicionei a coluna Tabela para visualização
             const tr = `
                 <tr>
                     <td>${item.nome}</td>
                     <td>${item.cor}</td>
+                    <td><span style="font-size:0.85rem; background:#f0f0f0; padding:2px 6px; border-radius:4px;">${item.tabela || 'Padrão'}</span></td>
                     <td>R$ ${item.preco.toFixed(2)}</td>
                     <td>${item.qty}</td>
                     <td>R$ ${item.subtotal.toFixed(2)}</td>
