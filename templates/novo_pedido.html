@@ -4,18 +4,28 @@
 
 {% block content %}
 <div class="container-form">
+    
+    <a href="/home" class="voltar"><i class='bx bx-arrow-back'></i> Cancelar e Voltar</a>
+
     <h1>
-        {% if pedido_atual %}Editar Pedido #{{ proximo_id }}{% else %}Abrir Novo Pedido #{{ proximo_id }}{% endif %}
+        {% if pedido_atual %}
+            Editar Pedido <span style="color: var(--magenta-neon);">#{{ proximo_id }}</span>
+        {% else %}
+            Novo Pedido <span style="color: var(--magenta-neon);">#{{ proximo_id }}</span>
+        {% endif %}
     </h1>
 
     <form action="/pedidos/novo" method="POST" onsubmit="return prepararEnvio()">
         <input type="hidden" name="pedido_id_editar" value="{{ pedido_atual.id if pedido_atual else '' }}">
 
-        <h2>1. Identificar Cliente</h2>
+        <div class="form-section-title">
+            <i class='bx bx-user-circle'></i> 1. Identificar Cliente
+        </div>
+        
         <div class="row">
             <div class="col" style="flex: 3;">
                 <label>Buscar Cliente:</label>
-                <input list="clientes_list" id="busca_cliente" placeholder="Digite para buscar..." 
+                <input list="clientes_list" id="busca_cliente" placeholder="Digite o nome para buscar..." 
                        value="{{ pedido_atual.cliente.nome if pedido_atual else '' }}" autocomplete="off">
                 <datalist id="clientes_list">
                     {% for cliente in clientes %}
@@ -25,20 +35,200 @@
                 <input type="hidden" name="cliente_id" id="cliente_id_hidden" value="{{ pedido_atual.cliente_id if pedido_atual else '' }}">
             </div>
             <div class="col">
-                 <br>
-                 <a href="/clientes/novo" style="color: #007bff; font-weight: bold;">+ Cadastrar Novo</a>
+                 <a href="/clientes/novo" style="color: var(--magenta-neon); font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 20px; text-align: right;">+ Cadastrar Novo</a>
             </div>
         </div>
+
+        <div id="info_cliente" style="background: #fdf2ff; padding: 15px; border-radius: 15px; border: 1px dashed var(--magenta-neon); display: none; margin-bottom: 20px; color: #555;">
+            <strong>Cliente Selecionado:</strong> <span id="span_nome">---</span> <br>
+            Tipo: <span id="span_tipo">---</span>
+        </div>
+
+        <div class="form-section-title">
+            <i class='bx bx-shopping-bag'></i> 2. Adicionar Produtos
+        </div>
+
+        <div style="background: #fafafa; padding: 20px; border-radius: 20px; margin-bottom: 20px;">
+            <div class="row">
+                <div class="col" style="flex: 2;">
+                    <label>Produto:</label>
+                    <select id="produto_select">
+                        <option value="">-- Escolha --</option>
+                        {% for p in produtos %}
+                            <option value="{{ p.id }}" 
+                                    data-varejo="{{ p.preco_varejo }}" 
+                                    data-atacado="{{ p.preco_atacado }}"
+                                    data-atacarejo="{{ p.preco_atacarejo }}"
+                                    data-premium="{{ p.preco_atacado_premium }}">
+                                {{ p.nome_produto }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Cor:</label>
+                    <input type="text" id="cor_input" placeholder="Ex: Vermelho">
+                </div>
+                <div class="col" style="max-width: 100px;">
+                    <label>Qtd:</label>
+                    <input type="number" id="qty_input" value="1" min="1">
+                </div>
+                <div class="col" style="max-width: 150px;">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn-add" onclick="adicionarAoCarrinho()" style="width: 100%;">
+                        <i class='bx bx-plus'></i> Incluir
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabela_carrinho">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Cor</th>
+                        <th>Preço Unit.</th>
+                        <th>Qtd</th>
+                        <th>Subtotal</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
         
-        <h2>2. Adicionar Produtos</h2>
-        <br><hr><br>
-        <button type="submit" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 1.2rem; cursor: pointer;">
-            Gerar Pedido
+        <div style="text-align: right; margin-top: 15px; font-size: 1.2rem; color: var(--roxo-profundo);">
+            Total Estimado: <strong id="total_display">R$ 0.00</strong>
+        </div>
+
+        <input type="hidden" name="itens_carrinho" id="itens_carrinho_json">
+
+        <div class="form-section-title">
+            <i class='bx bx-truck'></i> 3. Detalhes do Envio
+        </div>
+
+        <label>Forma de Envio:</label>
+        <select name="forma_envio">
+            <option value="Retirada" {% if pedido_atual and pedido_atual.forma_envio == 'Retirada' %}selected{% endif %}>Retirada no Ateliê</option>
+            <option value="Correios" {% if pedido_atual and pedido_atual.forma_envio == 'Correios' %}selected{% endif %}>Correios (PAC/Sedex)</option>
+            <option value="Motoboy" {% if pedido_atual and pedido_atual.forma_envio == 'Motoboy' %}selected{% endif %}>Motoboy</option>
+            <option value="Excursão" {% if pedido_atual and pedido_atual.forma_envio == 'Excursão' %}selected{% endif %}>Excursão</option>
+        </select>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <button type="submit" class="btn-gradiente">
+            <i class='bx bx-check-circle'></i> Gerar Pedido
         </button>
     </form>
 </div>
 
 <script>
-    // ... Cole aqui os scripts JS de carrinho e busca que estavam no novo_pedido.html ...
+    let carrinho = [];
+    
+    // Recupera dados se for edição
+    const dadosEdicao = JSON.parse('{{ itens_pre_carregados | safe }}');
+    if(dadosEdicao.length > 0) {
+        carrinho = dadosEdicao;
+        renderizarCarrinho();
+    }
+
+    // Identificar Cliente (Lógica de Preço)
+    const buscaInput = document.getElementById('busca_cliente');
+    const hiddenId = document.getElementById('cliente_id_hidden');
+    const infoDiv = document.getElementById('info_cliente');
+    
+    buscaInput.addEventListener('input', function() {
+        const val = this.value;
+        const opts = document.getElementById('clientes_list').options;
+        for (let i = 0; i < opts.length; i++) {
+            if (opts[i].value === val) {
+                hiddenId.value = opts[i].getAttribute('data-id');
+                const tipo = opts[i].getAttribute('data-tipo');
+                document.getElementById('span_nome').innerText = val;
+                document.getElementById('span_tipo').innerText = tipo;
+                infoDiv.style.display = 'block';
+                return;
+            }
+        }
+        hiddenId.value = "";
+        infoDiv.style.display = 'none';
+    });
+    
+    // Dispara evento se já tiver valor (edição)
+    if(buscaInput.value) { buscaInput.dispatchEvent(new Event('input')); }
+
+    function adicionarAoCarrinho() {
+        const sel = document.getElementById('produto_select');
+        const opt = sel.options[sel.selectedIndex];
+        if(!opt.value) { alert("Escolha um produto"); return; }
+        
+        // Define preço baseado no tipo do cliente
+        let preco = parseFloat(opt.getAttribute('data-varejo'));
+        const tipoCli = document.getElementById('span_tipo').innerText;
+        
+        if(tipoCli === 'Atacado') preco = parseFloat(opt.getAttribute('data-atacado'));
+        else if(tipoCli === 'Atacarejo') preco = parseFloat(opt.getAttribute('data-atacarejo'));
+        else if(tipoCli === 'Atacado Premium') preco = parseFloat(opt.getAttribute('data-premium'));
+
+        const item = {
+            id: opt.value,
+            nome: opt.text.trim(),
+            cor: document.getElementById('cor_input').value,
+            qty: parseInt(document.getElementById('qty_input').value),
+            preco: preco,
+            subtotal: preco * parseInt(document.getElementById('qty_input').value)
+        };
+        
+        carrinho.push(item);
+        renderizarCarrinho();
+        
+        // Limpa campos menores
+        document.getElementById('cor_input').value = "";
+        document.getElementById('qty_input').value = "1";
+    }
+
+    function removerItem(index) {
+        carrinho.splice(index, 1);
+        renderizarCarrinho();
+    }
+
+    function renderizarCarrinho() {
+        const tbody = document.querySelector('#tabela_carrinho tbody');
+        tbody.innerHTML = "";
+        let total = 0;
+        
+        carrinho.forEach((item, index) => {
+            total += item.subtotal;
+            const tr = `
+                <tr>
+                    <td>${item.nome}</td>
+                    <td>${item.cor}</td>
+                    <td>R$ ${item.preco.toFixed(2)}</td>
+                    <td>${item.qty}</td>
+                    <td>R$ ${item.subtotal.toFixed(2)}</td>
+                    <td><button type="button" onclick="removerItem(${index})" style="color:red; background:none; border:none; cursor:pointer;"><i class='bx bx-trash'></i></button></td>
+                </tr>
+            `;
+            tbody.innerHTML += tr;
+        });
+        
+        document.getElementById('total_display').innerText = "R$ " + total.toFixed(2);
+        document.getElementById('itens_carrinho_json').value = JSON.stringify(carrinho);
+    }
+
+    function prepararEnvio() {
+        if (!document.getElementById('cliente_id_hidden').value) {
+            alert("Selecione um cliente válido da lista!");
+            return false;
+        }
+        if (carrinho.length === 0) {
+            alert("Adicione pelo menos um produto!");
+            return false;
+        }
+        return true;
+    }
 </script>
 {% endblock %}

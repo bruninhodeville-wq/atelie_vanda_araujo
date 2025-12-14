@@ -10,7 +10,7 @@
     --branco-puro: #ffffff;
     --sidebar-bg: var(--roxo-profundo);
     --sidebar-text: #ffffff;
-    --sombra-suave: 0 4px 15px rgba(128, 0, 128, 0.15);
+    --sombra-suave: 0 10px 30px rgba(128, 0, 128, 0.1); /* Sombra mais difusa e moderna */
 }
 
 /* ===== RESET BÁSICO ===== */
@@ -24,7 +24,7 @@ body {
 
 a { text-decoration: none; }
 
-/* ===== SIDEBAR (Menu Lateral) ===== */
+/* ===== SIDEBAR (Mantendo o que já funcionava) ===== */
 .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 78px;
     background: var(--sidebar-bg); padding: 6px 14px; z-index: 99;
@@ -49,7 +49,6 @@ a { text-decoration: none; }
 .sidebar ul { margin-top: 20px; }
 .sidebar li { position: relative; margin: 8px 0; list-style: none; }
 
-/* Links do Menu */
 .sidebar li a {
     display: flex; height: 100%; width: 100%; border-radius: 12px;
     align-items: center; text-decoration: none; transition: all 0.4s ease;
@@ -69,84 +68,32 @@ a { text-decoration: none; }
     text-align: center; line-height: 60px;
 }
 
-/* --- CORREÇÃO DOS NOMES PRETOS (TOOLTIPS) --- */
-.sidebar li .tooltip {
-    position: absolute; 
-    top: -20px; 
-    left: calc(100% + 15px);
-    z-index: 3; 
-    background: #fff; 
-    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    padding: 6px 12px; 
-    border-radius: 4px; 
-    font-size: 15px;
-    font-weight: 400; 
-    opacity: 0; 
-    white-space: nowrap; 
-    pointer-events: none;
-    transition: 0s; 
-    color: #333;
-    display: block;
-}
-
-.sidebar li:hover .tooltip {
-    opacity: 1; 
-    top: 50%; 
-    transform: translateY(-50%);
-}
-
-/* SE O MENU ESTIVER ABERTO, ESCONDE OS TOOLTIPS (Aqui estava o problema) */
-.sidebar.open li .tooltip {
-    display: none !important; 
-}
-
-/* Item Ativo */
 .sidebar li a.active {
     background: var(--magenta-neon);
     box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
 }
 .sidebar li a.active i, .sidebar li a.active .links_name { color: #fff !important; }
 
-/* --- CORREÇÃO DO LOGOUT CORTADO --- */
-/* Área de Logout (Ajustada para não cortar) */
+/* Logout Area */
 .sidebar li.profile {
-    position: fixed;
-    height: 80px; /* Aumentei de 60px para 80px para dar mais respiro */
-    width: 78px;
-    left: 0;
-    bottom: 0; /* Garante que fique exatamente no rodapé */
-    padding: 15px 14px; /* Ajustei o espaçamento interno */
-    background: #5a005a;
-    transition: all 0.5s ease;
-    overflow: hidden;
-    z-index: 100; /* Garante que fique acima de tudo */
+    position: fixed; height: 80px; width: 78px; left: 0; bottom: 0;
+    padding: 15px 14px; background: #5a005a;
+    transition: all 0.5s ease; overflow: hidden; z-index: 100;
 }
-
-/* Centraliza o ícone de sair quando o menu está fechado */
 .sidebar li.profile #log_out {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    background: #5a005a;
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    border-radius: 0px;
-    transition: all 0.5s ease;
-    text-align: center; /* Garante alinhamento */
+    position: absolute; top: 50%; right: 0; transform: translateY(-50%);
+    background: #5a005a; width: 100%; height: 60px; line-height: 60px;
+    text-align: center; transition: all 0.5s ease;
 }
-
-/* Ajustes quando abre o menu */
 .sidebar.open li.profile { width: 250px; }
 .sidebar.open li.profile #log_out { width: 50px; background: none; }
 .sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
 .sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
-.sidebar.open li.profile { width: 250px; }
-.sidebar li.profile .name, .sidebar li.profile .job { font-size: 15px; color: #fff; white-space: nowrap; }
-.sidebar li.profile .job { font-size: 12px; opacity: 0.8; }
 
-/* ===== LAYOUT GERAL ===== */
+/* Tooltips Fix */
+.sidebar li .tooltip { display: none; } /* Oculta tooltips para limpar o visual */
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
 .home-section {
     position: relative; background: var(--fundo-geral); min-height: 100vh;
     top: 0; left: 78px; width: calc(100% - 78px);
@@ -154,12 +101,138 @@ a { text-decoration: none; }
 }
 .sidebar.open ~ .home-section { left: 250px; width: calc(100% - 250px); }
 
+/* ===== ESTILOS MODERNOS DE FORMULÁRIO (ATUALIZADO) ===== */
+
+/* Container Principal "Card" */
 .container, .container-form {
-    background: var(--branco-puro); padding: 30px; border-radius: 12px;
-    box-shadow: 0 4px 15px var(--sombra-suave); width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
+    background: var(--branco-puro);
+    padding: 40px; 
+    border-radius: 20px; /* Bordas mais arredondadas */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 100%; max-width: 1100px; margin: 0 auto 30px auto;
+    border: 1px solid #f0f0f0;
 }
 
-/* Responsividade */
+/* Títulos */
+h1 { 
+    color: var(--roxo-profundo); 
+    margin-bottom: 30px; 
+    border-bottom: none; 
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+/* Seções do Formulário (Subtítulos) */
+.form-section-title {
+    color: var(--magenta-neon);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.form-section-title i { font-size: 1.4rem; }
+
+/* Inputs e Selects "Femininos/Modernos" */
+input, select, textarea, .form-control {
+    width: 100%; 
+    padding: 12px 20px; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 50px; /* Estilo Pílula */
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    color: #555;
+}
+
+input:focus, select:focus, textarea:focus { 
+    border-color: var(--magenta-neon); 
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 0, 255, 0.1); /* Glow suave */
+    outline: none; 
+}
+
+/* Tabelas Elegantes */
+.table-responsive {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    margin-top: 10px;
+    border: 1px solid #eee;
+}
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+
+th { 
+    background: var(--roxo-profundo); /* Cabeçalho Roxo */
+    color: white; 
+    padding: 15px; 
+    text-align: left; 
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+td { 
+    padding: 15px; 
+    border-bottom: 1px solid #f0f0f0; 
+    color: #555;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover { background-color: #fff5ff; } /* Hover rosa bem clarinho */
+
+/* Botões Modernos */
+.btn-gradiente {
+    background: linear-gradient(135deg, var(--roxo-profundo), var(--magenta-neon));
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+}
+.btn-gradiente:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 0, 255, 0.5);
+}
+
+.btn-add {
+    background: linear-gradient(135deg, var(--ciano-vivo), var(--turquesa));
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(64, 224, 208, 0.3);
+}
+.btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px; 
+    background: #f0f0f0; 
+    color: #666;
+    border-radius: 50px; 
+    font-weight: 600; 
+    font-size: 0.9rem; 
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+.voltar:hover { background: #e0e0e0; color: #333; }
+
+/* Grid System */
+.row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-end; }
+.col { flex: 1; min-width: 200px; }
+
+/* Responsividade Mobile */
 @media (max-width: 768px) {
     .sidebar { width: 0; padding: 0; }
     .sidebar.open { width: 250px; padding: 6px 14px; }
