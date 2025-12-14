@@ -1,92 +1,154 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gerenciar Pedidos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
-    <style>
-        .voltar, .botao-novo {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .voltar:hover { background-color: #5a6268; }
-        
-        .botao-novo {
-            background-color: #28a745; /* Verde para destacar venda */
-            float: right;
-        }
-        .botao-novo:hover { background-color: #218838; }
-        
-        .header-container { overflow: hidden; margin-bottom: 20px; }
+{% extends "base.html" %}
 
-        /* Estilos para Status */
-        .status-pendente { color: #856404; background-color: #fff3cd; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        .status-concluido { color: #155724; background-color: #d4edda; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <a href="/home" class="voltar">&larr; Voltar ao Painel</a>
+{% block title %}Histórico de Pedidos{% endblock %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}" style="padding: 15px; margin-bottom: 20px; background-color: #d4edda; color: #155724; border-radius: 4px;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <div class="header-container">
-        <h2 style="float: left;">Pedidos Realizados</h2>
-        <a href="/pedidos/novo" class="botao-novo">+ Novo Pedido</a>
+{% block content %}
+<div class="container">
+    
+    <div style="margin-bottom: 30px;">
+        <h1 style="border: none; margin-bottom: 5px;">Pedidos Realizados</h1>
+        <p style="color: #888; font-size: 0.95rem;">Acompanhe o status e o histórico de vendas da loja.</p>
     </div>
 
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr style="background-color: #f2f2f2;">
-                <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Data</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Cliente</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Forma Envio</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Status</th>
-                <th style="padding: 8px; border: 1px solid #ddd;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pedido in lista_de_pedidos %}
-            <tr>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">#{{ pedido.id }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{{ pedido.data_pedido.strftime('%d/%m/%Y') }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{ pedido.cliente.nome }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{{ pedido.forma_envio }}</td>
-                <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                    <span class="status-{{ pedido.status|lower }}">{{ pedido.status }}</span>
-                </td>
-                <<td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
-                    <a href="{{ url_for('detalhes_pedido', id=pedido.id) }}" style="color: #007bff; margin-right: 8px; text-decoration: none;" title="Ver Nota">📄</a>
+    <div style="background: #fafafa; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between;">
+        <div style="position: relative; width: 100%; max-width: 400px;">
+            <i class='bx bx-search' style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa;"></i>
+            <input type="text" id="filtroTabela" onkeyup="filtrarTabela()" placeholder="Buscar por Cliente, Status ou ID..." 
+                   style="width: 100%; padding: 12px 12px 12px 40px; border-radius: 50px; border: 1px solid #e0e0e0; outline: none; margin-bottom: 0;">
+        </div>
+        
+        <span style="color: var(--roxo-profundo); font-weight: 600; font-size: 0.9rem;">
+            Total listado: {{ lista_de_pedidos|length }}
+        </span>
+    </div>
+
+    <div class="table-responsive" style="box-shadow: none; border: 1px solid #eee;">
+        <table id="tabelaPedidos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Envio</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in lista_de_pedidos %}
+                <tr style="transition: background 0.2s;">
+                    <td style="font-weight: bold; color: var(--roxo-profundo);">#{{ pedido.id }}</td>
+                    <td>{{ pedido.data_pedido.strftime('%d/%m/%Y') }}</td>
+                    <td style="font-weight: 500;">{{ pedido.cliente.nome }}</td>
+                    <td>{{ pedido.forma_envio }}</td>
                     
-                    <a href="{{ url_for('gerenciar_itens', id=pedido.id) }}" style="color: #17a2b8; margin-right: 8px; text-decoration: none;" title="Gerenciar Itens">🛒</a>
+                    {% set total = namespace(value=0) %}
+                    {% for item in pedido.itens %}
+                        {% set total.value = total.value + (item.preco_unitario_na_venda * item.quantidade) %}
+                    {% endfor %}
+                    {% for custo in pedido.custos_envios %}
+                         {% set total.value = total.value + custo.valor %}
+                    {% endfor %}
+                    {% set total.value = total.value - (pedido.desconto or 0) %}
 
-                    <a href="{{ url_for('editar_pedido', id=pedido.id) }}" style="color: #ffc107; margin-right: 8px; text-decoration: none;" title="Editar Status">✏️</a>
+                    <td style="color: #333; font-weight: bold;">R$ {{ "%.2f"|format(total.value) }}</td>
+                    
+                    <td>
+                        <span class="status-badge status-{{ pedido.status|lower|replace(' ', '-') }}">
+                            {{ pedido.status }}
+                        </span>
+                    </td>
+                    
+                    <td style="text-align: center;">
+                        <div style="display: inline-flex; gap: 5px;">
+                            <a href="{{ url_for('detalhes_pedido', id=pedido.id) }}" class="btn-icon btn-ver" title="Ver Detalhes">
+                                <i class='bx bx-show'></i>
+                            </a>
+                            <a href="{{ url_for('editar_pedido', id=pedido.id) }}" class="btn-icon btn-editar" title="Editar Status">
+                                <i class='bx bx-edit-alt'></i>
+                            </a>
+                            <a href="{{ url_for('deletar_pedido', id=pedido.id) }}" class="btn-icon btn-excluir" title="Excluir Pedido">
+                                <i class='bx bx-trash'></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                        <i class='bx bx-box' style="font-size: 3rem; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                        Nenhum pedido realizado ainda.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                    <a href="{{ url_for('deletar_pedido', id=pedido.id) }}" style="color: #dc3545; font-weight: bold; text-decoration: none;" title="Excluir Pedido">🗑️</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6" style="padding: 20px; text-align: center; color: #777;">
-                    Nenhum pedido cadastrado ainda.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+<style>
+    /* Badges de Status Modernas */
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+        letter-spacing: 0.5px;
+    }
+    /* Cores das Badges */
+    .status-pendente, .status-rascunho { background: #fff8e1; color: #f57f17; border: 1px solid #ffecb3; }
+    .status-pago, .status-concluido, .status-entregue { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    .status-enviado, .status-em-producao { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+    .status-cancelado { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+    /* Botões de Ação Redondos */
+    .btn-icon {
+        width: 35px; height: 35px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 1.1rem;
+    }
+    .btn-ver { background: #f0f4ff; color: var(--roxo-profundo); }
+    .btn-ver:hover { background: var(--roxo-profundo); color: white; }
+    
+    .btn-editar { background: #fff0f5; color: var(--magenta-neon); }
+    .btn-editar:hover { background: var(--magenta-neon); color: white; }
+    
+    .btn-excluir { background: #fff; color: #ddd; }
+    .btn-excluir:hover { background: #ffebee; color: #d32f2f; }
+</style>
+
+<script>
+function filtrarTabela() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filtroTabela");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("tabelaPedidos");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    // Busca na coluna Cliente (2), Status (5) ou ID (0)
+    tdID = tr[i].getElementsByTagName("td")[0];
+    tdCli = tr[i].getElementsByTagName("td")[2];
+    tdStat = tr[i].getElementsByTagName("td")[5];
+    
+    if (tdCli || tdStat) {
+      txtValueID = tdID.textContent || tdID.innerText;
+      txtValueCli = tdCli.textContent || tdCli.innerText;
+      txtValueStat = tdStat.textContent || tdStat.innerText;
+      
+      if (txtValueCli.toUpperCase().indexOf(filter) > -1 || 
+          txtValueStat.toUpperCase().indexOf(filter) > -1 ||
+          txtValueID.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+{% endblock %}
