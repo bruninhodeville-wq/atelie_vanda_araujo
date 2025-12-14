@@ -1,65 +1,106 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cadastrar Novo Cliente</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
-    <style>
-        .voltar {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .voltar:hover { background-color: #5a6268; }
-    </style>
-</head>
-<body>
-    <a href="/clientes" class="voltar">&larr; Voltar para Lista</a>
+{% extends "base.html" %}
 
-    <h1>Cadastrar Novo Cliente</h1>
+{% block title %}Novo Cliente{% endblock %}
+
+{% block content %}
+<div class="container-form">
     
-    <form action="/clientes/novo" method="POST">
-        <div>
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
-        </div>
-        <div>
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" required>
-        </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="text" id="email" name="email">
-        </div>
-        <div>
-            <label for="endereco">Endereço:</label>
-            <input type="text" id="endereco" name="endereco" required>
-        </div>
-        <div>
-            <label for="estado_uf">Estado (UF):</label>
-            <input type="text" id="estado_uf" name="estado_uf" maxlength="2" required>
-        </div>
-        <div>
-            <label for="loja">Loja (Opcional):</label>
-            <input type="text" id="loja" name="loja">
-        </div>
-        <div>
-            <label for="tipo_cliente">Tipo de Cliente:</label>
-            <select id="tipo_cliente" name="tipo_cliente" required>
-                <option value="" disabled selected>-- Selecione uma opção --</option>
-                <option value="Atacado">Atacado</option>
-                <option value="Varejo">Varejo</option>
-                <option value="Atacarejo">Atacarejo</option>
-            </select>
-        </div>
-        
-        <button type="submit">Cadastrar Cliente</button>
-    </form>
+    <a href="{{ url_for('clientes') }}" class="voltar">
+        <i class='bx bx-arrow-back'></i> Cancelar
+    </a>
 
-</body>
-</html>
+    <h1>Novo Cliente</h1>
+
+    <form method="POST">
+        
+        <div class="form-section-title">
+            <i class='bx bx-user'></i> Dados Pessoais
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 2;">
+                <label>Nome Completo:</label>
+                <input type="text" name="nome" placeholder="Ex: Ana Maria Silva" required autofocus>
+            </div>
+            <div class="col">
+                <label>Tipo de Cliente:</label>
+                <select name="tipo_cliente">
+                    <option value="Varejo">Varejo (Padrão)</option>
+                    <option value="Atacado">Atacado</option>
+                    <option value="Atacarejo">Atacarejo</option>
+                    <option value="Atacado Premium">Atacado Premium</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-section-title">
+            <i class='bx bx-phone'></i> Contato
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label>Telefone / WhatsApp:</label>
+                <input type="text" name="telefone" placeholder="(00) 00000-0000" required>
+            </div>
+            <div class="col">
+                <label>E-mail (Opcional):</label>
+                <input type="email" name="email" placeholder="cliente@email.com">
+            </div>
+        </div>
+
+        <div class="form-section-title">
+            <i class='bx bx-map'></i> Endereço e Local
+        </div>
+
+        <label>Endereço Completo:</label>
+        <input type="text" name="endereco" placeholder="Rua, Número, Bairro" required>
+
+        <div class="row">
+            <div class="col">
+                <label>Estado (UF):</label>
+                <select name="estado_uf">
+                    <option value="">-- Selecione --</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>Loja/Referência (Opcional):</label>
+                <input type="text" name="loja" placeholder="Ex: Box 12 - Feira dos Goianos">
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <button type="submit" class="btn-gradiente">
+            <i class='bx bx-user-plus'></i> Cadastrar Cliente
+        </button>
+
+    </form>
+</div>
+{% endblock %}
