@@ -621,23 +621,25 @@ def debug():
     except Exception as e:
         return f"Erro ao ler estáticos: {e}"
     
-# --- ROTA DE CORREÇÃO (USAR UMA VEZ PARA CRIAR AS TABELAS NO POSTGRES) ---
+
 @app.route('/fix-banco')
 def fix_banco():
     try:
-        # 1. Cria as tabelas que faltam
+        # 1. APAGA TUDO (Para garantir que a tabela velha suma)
+        db.drop_all()
+        
+        # 2. CRIA TUDO DO ZERO (Com as colunas novas, incluindo e-mail)
         db.create_all()
         
-        # 2. Verifica se o Mestre já existe
-        if User.query.count() == 0:
-            # Cria o usuário Mestre
-            u = User(username="admin", email="seu-email@gmail.com") # <--- CONFIRA SEU E-MAIL AQUI
-            u.set_password("123456") # <--- SENHA PROVISÓRIA
-            db.session.add(u)
-            db.session.commit()
-            return "SUCESSO: Tabelas Criadas e Usuário 'admin' (senha 123456) criado!"
-        else:
-            return "SUCESSO: Tabelas já existem e usuário também."
+        # 3. Cria o usuário Mestre
+        # IMPORTANTE: Troque pelo seu e-mail real aqui
+        u = User(username="admin", email="bruno@email.com") 
+        u.set_password("123456") 
+        
+        db.session.add(u)
+        db.session.commit()
+        
+        return "SUCESSO TOTAL! Banco resetado, tabelas atualizadas e usuário admin criado."
             
     except Exception as e:
         return f"ERRO: {str(e)}"
