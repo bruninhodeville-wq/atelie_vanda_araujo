@@ -630,11 +630,8 @@ def fix_banco():
         
         # 2. CRIA TUDO DO ZERO (Com as colunas novas, incluindo e-mail)
         db.create_all()
-        
-        # 3. Cria o usuário Mestre
-        # IMPORTANTE: Troque pelo seu e-mail real aqui
-        u = User(username="admin", email="bruno@email.com") 
-        u.set_password("123456") 
+        u = User(username="vandaaraujo", email="vandiinhaaraujo22@gmail.com") 
+        u.set_password("Vanda@2102") 
         
         db.session.add(u)
         db.session.commit()
