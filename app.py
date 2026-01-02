@@ -261,6 +261,17 @@ def acompanhar_pedidos():
 
     return render_template('acompanhar_pedido.html', pedidos=pedidos, cliente=cliente_encontrado)
 
+@app.route('/reset-geral')
+def reset_banco():
+    # CUIDADO: Isso apaga TODOS os dados do banco!
+    try:
+        db.drop_all()   # Apaga todas as tabelas
+        db.create_all() # Cria tabelas novinhas e vazias
+        flash('Banco de dados resetado com sucesso! Agora configure o Mestre.', 'warning')
+        return redirect(url_for('setup_mestre'))
+    except Exception as e:
+        return f"Erro ao resetar: {str(e)}"
+
 
 if __name__ == '__main__':
     with app.app_context():
