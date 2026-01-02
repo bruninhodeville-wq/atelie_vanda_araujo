@@ -614,6 +614,27 @@ def debug():
         return f"CSS Encontrado: {conteudo}"
     except Exception as e:
         return f"Erro ao ler estáticos: {e}"
+    
+# --- ROTA DE CORREÇÃO (USAR UMA VEZ PARA CRIAR AS TABELAS NO POSTGRES) ---
+@app.route('/fix-banco')
+def fix_banco():
+    try:
+        # 1. Cria as tabelas que faltam
+        db.create_all()
+        
+        # 2. Verifica se o Mestre já existe
+        if User.query.count() == 0:
+            # Cria o usuário Mestre
+            u = User(username="admin", email="seu-email@gmail.com") # <--- CONFIRA SEU E-MAIL AQUI
+            u.set_password("123456") # <--- SENHA PROVISÓRIA
+            db.session.add(u)
+            db.session.commit()
+            return "SUCESSO: Tabelas Criadas e Usuário 'admin' (senha 123456) criado!"
+        else:
+            return "SUCESSO: Tabelas já existem e usuário também."
+            
+    except Exception as e:
+        return f"ERRO: {str(e)}"
 
 if __name__ == '__main__':
     with app.app_context():
