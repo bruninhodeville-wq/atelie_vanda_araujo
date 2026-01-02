@@ -2,53 +2,161 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Acompanhar Pedidos - Ateliê</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastrear Pedido - Ateliê Vanda</title>
+    
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+
+    <style>
+        /* Estilos Específicos para a Área Pública */
+        body {
+            background: linear-gradient(135deg, #f4f7f6 0%, #e6e9f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .search-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(128, 0, 128, 0.15);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 900px;
+            animation: slideUp 0.8s ease;
+        }
+
+        h1 { color: var(--roxo-profundo); margin-bottom: 10px; font-size: 1.8rem; }
+        p { color: #666; margin-bottom: 25px; }
+
+        input {
+            width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 50px;
+            font-size: 1.1rem; text-align: center; margin-bottom: 15px; background: #fafafa;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--magenta-neon); outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(255,0,255,0.1); }
+
+        .btn-track {
+            width: 100%; padding: 15px; border-radius: 50px; border: none;
+            background: linear-gradient(135deg, var(--roxo-profundo), var(--magenta-neon));
+            color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-track:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,0,255,0.4); }
+
+        /* Tabela de Resultados */
+        .order-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .order-item:last-child { border-bottom: none; }
+
+        .order-info strong { color: var(--roxo-profundo); font-size: 1.1rem; }
+        .order-date { font-size: 0.9rem; color: #888; }
+        .order-products { font-size: 0.95rem; color: #555; margin-top: 5px; }
+
+        /* Status Badges (Mesmo padrão do sistema) */
+        .status-badge { padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+        .status-pendente { background: #fff8e1; color: #f57f17; border: 1px solid #ffecb3; }
+        .status-em-producao { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .status-concluido, .status-entregue { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .status-cancelado { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body>
-    <div class="home-section">
-        <div class="text">Acompanhar Pedidos</div>
-        <div class="container">
-            <h1>Lista de Pedidos para Acompanhamento</h1>
-            <p style="text-align: center; color: #666;">Aqui você poderá ver o status e detalhes de todos os pedidos.</p>
-            
-            <div class="table-responsive">
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                    <thead>
-                        <tr style="background-color: #f8f9fa;">
-                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">ID</th>
-                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Cliente</th>
-                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Data</th>
-                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Status</th>
-                            <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: left;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">#123</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">João Silva</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">15/12/2023</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;"><span style="background: #ffc107; padding: 3px 8px; border-radius: 10px; font-size: 0.9em;">Pendente</span></td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
-                                <a href="#" class="btn-link">Ver Detalhes</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">#124</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">Maria Oliveira</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">14/12/2023</td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;"><span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.9em;">Concluído</span></td>
-                            <td style="padding: 12px; border-bottom: 1px solid #eee;">
-                                <a href="#" class="btn-link">Ver Detalhes</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+
+    <div class="search-card">
+        <div style="margin-bottom: 20px;">
+            <i class='bx bx-package' style="font-size: 3.5rem; color: var(--magenta-neon);"></i>
         </div>
+        <h1>Rastrear Pedido</h1>
+        <p>Digite seu <b>ID de Cliente</b> abaixo para acompanhar o status das suas encomendas.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="padding: 10px; border-radius: 8px; margin-bottom: 15px; background: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="number" name="cliente_id" placeholder="Ex: 15" required autofocus>
+            <button type="submit" class="btn-track">Buscar Pedidos</button>
+        </form>
+        
+        <br>
+        <a href="/login" style="font-size: 0.85rem; color: #999; text-decoration: none;">Área Administrativa</a>
     </div>
 
-    </body>
+    {% if cliente %}
+    <div class="results-card">
+        <h2 style="color: #333; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+            Olá, <span style="color: var(--roxo-profundo);">{{ cliente.nome }}</span>!
+        </h2>
+
+        {% if pedidos %}
+            {% for pedido in pedidos %}
+            <div class="order-item">
+                <div class="order-info">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <strong>Pedido #{{ pedido.id }}</strong>
+                        <span class="order-date"><i class='bx bx-calendar'></i> {{ pedido.data_pedido.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    
+                    <div class="order-products">
+                        <i class='bx bx-shopping-bag'></i>
+                        {% for item in pedido.itens %}
+                            {{ item.quantidade }}x {{ item.produto.nome_produto }} ({{ item.cor }}){% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                        <i class='bx bx-truck'></i> Envio: {{ pedido.forma_envio }} 
+                        {% if pedido.prazo_entrega %}
+                             | Previsão: {{ pedido.prazo_entrega.strftime('%d/%m/%Y') }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <span class="status-badge status-{{ pedido.status|lower|replace(' ', '-') }}">
+                        {{ pedido.status }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #999;">Nenhum pedido encontrado para este cadastro.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</body>
 </html>

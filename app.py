@@ -236,10 +236,30 @@ def home():
     if 'user_id' not in session: return redirect(url_for('login'))
     return render_template('home.html')
 
-# (Copie as rotas Clientes, Produtos, Pedidos do seu arquivo antigo, 
-# elas continuam funcionando normalmente pois a lógica não mudou)
+@app.route('/acompanhar_pedidos', methods=['GET', 'POST'])
+def acompanhar_pedidos():
+    # Rota PÚBLICA (Login não é necessário)
+    pedidos = []
+    cliente_encontrado = None
+    
+    if request.method == 'POST':
+        termo = request.form.get('cliente_id')
+        
+        # Tenta buscar pelo ID (se for número)
+        if termo and termo.isdigit():
+            cliente_encontrado = Cliente.query.get(int(termo))
+            
+            if cliente_encontrado:
+                # Busca os pedidos desse cliente, do mais recente para o mais antigo
+                pedidos = Pedido.query.filter_by(cliente_id=cliente_encontrado.id).order_by(Pedido.id.desc()).all()
+                if not pedidos:
+                    flash('Você ainda não possui pedidos registrados.', 'info')
+            else:
+                flash('Cliente não encontrado com este ID.', 'danger')
+        else:
+            flash('Por favor, digite um ID válido (apenas números).', 'warning')
 
-# ... (Cole aqui as rotas: /clientes, /produtos, /pedidos, /acompanhar_pedidos, etc) ...
+    return render_template('acompanhar_pedido.html', pedidos=pedidos, cliente=cliente_encontrado)
 
 
 if __name__ == '__main__':
