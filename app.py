@@ -32,11 +32,17 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'chave-padrao-desenvolvi
 
 # --- BANCO DE DADOS (PostgreSQL) ---
 database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+# Verifica se existe uma URL configurada no Render
+if database_url:
+    # Correção para o Render: Se vier como "postgres://", muda para "postgresql://"
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    
+    # Define o banco como PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
-    # Fallback para SQLite local caso rode no PC
+    # Se não tiver URL configurada, usa SQLite (apenas para teste local no PC)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'loja.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
