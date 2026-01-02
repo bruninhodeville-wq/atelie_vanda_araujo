@@ -12,10 +12,10 @@ from datetime import datetime, timedelta
 from whitenoise import WhiteNoise
 from flask_mail import Mail, Message
 
-# --- CONFIGURAÇÃO INICIAL ---
+# --- O CORAÇÃO DO SISTEMA ---
 app = Flask(__name__)
 
-# --- CONFIGURAÇÃO DO E-MAIL (Variáveis de Ambiente do Render) ---
+# Configurações de E-mail (Pega lá do painel do Render)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -23,43 +23,45 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 
-# --- WHITE NOISE (Arquivos Estáticos/CSS) ---
+# WhiteNoise: Pra não dar erro de CSS e Imagens quando o site estiver no ar
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.wsgi_app = WhiteNoise(app.wsgi_app, root=os.path.join(basedir, 'static'), prefix='/static/')
 
-# Chave secreta segura
+# Chave secreta pra criptografar a sessão (cookie)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'chave-padrao-desenvolvimento')
 
-# --- BANCO DE DADOS (PostgreSQL) ---
+# --- BANCO DE DADOS (Ajuste do PostgreSQL) ---
 database_url = os.environ.get('DATABASE_URL')
 
-# Verifica se existe uma URL configurada no Render
+# Se tiver um banco configurado no Render, usa ele
 if database_url:
-    # Correção para o Render: Se vier como "postgres://", muda para "postgresql://"
+    # O Render entrega como "postgres://", mas o Python pede "postgresql://"
+    # Esse if resolve a briga dos dois
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     
-    # Define o banco como PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
-    # Se não tiver URL configurada, usa SQLite (apenas para teste local no PC)
+    # Se não tiver URL (tipo rodando no seu PC), cria um arquivo local
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'loja.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- MODELOS (TABELAS) ---
+# --- AS TABELAS DO BANCO (MODELOS) ---
 
 class User(db.Model):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
-    email = Column(String(120), unique=True, nullable=False) 
+    email = Column(String(120), unique=True, nullable=False) # Agora temos e-mail pra recuperar senha
     password_hash = Column(String(256), nullable=False)
 
+    # Criptografa a senha antes de salvar
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    # Verifica se a senha bate
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -73,6 +75,7 @@ class Cliente(db.Model):
     telefone = Column(String(20), nullable=False)
     estado_uf = Column(String(2), nullable=False)
     tipo_cliente = Column(String(100), nullable=False)
+    # Link pra saber quais pedidos são desse cliente
     pedidos = relationship('Pedido', back_populates='cliente')
 
 class Produto(db.Model):
@@ -96,6 +99,7 @@ class Pedido(db.Model):
     forma_envio = Column(String(50), nullable=False)
     desconto = Column(Float, default=0.0)
     
+    # Amarrações com as outras tabelas
     cliente = relationship('Cliente', back_populates='pedidos')
     itens = relationship('ItemPedido', back_populates='pedido', cascade="all, delete-orphan")
     pagamentos = relationship('Pagamento', back_populates='pedido', cascade="all, delete-orphan")
@@ -132,11 +136,11 @@ class CustoEnvio(db.Model):
     pedido = relationship('Pedido', back_populates='custos_envios')
 
 
-# --- ROTAS DE ACESSO E AUTENTICAÇÃO ---
+# --- NAVEGAÇÃO BÁSICA (ROTAS) ---
 
 @app.route('/')
 def index():
-    # Rota padrão: Se logado vai pra Home, senão vai pra Login
+    # Se já logou, joga pra Home. Se não, tela de login.
     if 'user_id' in session:
         return redirect(url_for('home'))
     return redirect(url_for('login'))
@@ -146,23 +150,29 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        # Busca o usuário no banco
         user = User.query.filter_by(username=username).first()
+        
+        # Se achou e a senha bate
         if user and user.check_password(password):
             session['user_id'] = user.id
             session['username'] = user.username
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('home'))
         else:
-            flash('Usuário ou senha inválidos.', 'danger')
+            flash('Usuário ou senha incorretos.', 'danger')
+            
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
+    # Limpa a sessão (desloga) e manda pro login
     session.clear()
-    flash('Você foi desconectado.', 'info')
+    flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
 
-# --- RECUPERAÇÃO DE SENHA (ESQUECI MINHA SENHA) ---
+
+# --- RECUPERAÇÃO DE SENHA (ESQUECI A SENHA) ---
 
 @app.route('/esqueci-senha', methods=['GET', 'POST'])
 def esqueci_senha():
@@ -171,34 +181,37 @@ def esqueci_senha():
         user = User.query.filter_by(email=email_digitado).first()
         
         if user:
-            # Gera código aleatório de 6 dígitos
+            # Gera um código de 6 números aleatórios
             codigo = ''.join(random.choices(string.digits, k=6))
             session['reset_code'] = codigo
             session['reset_email'] = email_digitado
             
             try:
+                # Dispara o e-mail
                 msg = Message('Recuperação de Senha - Ateliê Vanda',
                               sender=app.config['MAIL_USERNAME'],
                               recipients=[email_digitado])
-                msg.body = f'Seu código de recuperação é: {codigo}'
+                msg.body = f'Seu código para recuperar a senha é: {codigo}'
                 mail.send(msg)
-                flash(f'Código enviado para {email_digitado}!', 'info')
+                flash(f'Enviamos o código para {email_digitado}. Cheque sua caixa de entrada!', 'info')
                 return redirect(url_for('validar_codigo'))
             except Exception as e:
-                flash(f'Erro ao enviar e-mail (Verifique config do Render): {str(e)}', 'danger')
+                flash(f'Erro ao enviar e-mail: {str(e)}', 'danger')
         else:
-            flash('E-mail não encontrado no sistema.', 'warning')
+            flash('Não achamos nenhum cadastro com esse e-mail.', 'warning')
             
     return render_template('esqueci_senha.html')
 
 @app.route('/validar-codigo', methods=['GET', 'POST'])
 def validar_codigo():
+    # Se tentar entrar direto sem ter pedido código, chuta de volta
     if 'reset_code' not in session: return redirect(url_for('esqueci_senha'))
     
     if request.method == 'POST':
         if request.form['codigo'] == session['reset_code']:
+            # Código bateu! Pode ir trocar a senha
             return redirect(url_for('nova_senha'))
-        flash('Código incorreto.', 'danger')
+        flash('Esse código tá errado.', 'danger')
         
     return render_template('validar_codigo.html')
 
@@ -212,64 +225,63 @@ def nova_senha():
             user.set_password(request.form['password'])
             db.session.commit()
             
-            # Limpa sessão
+            # Limpa a sessão de recuperação
             session.pop('reset_code', None)
             session.pop('reset_email', None)
             
-            flash('Senha alterada com sucesso! Faça login.', 'success')
+            flash('Senha trocada! Agora pode logar.', 'success')
             return redirect(url_for('login'))
             
     return render_template('nova_senha.html')
 
 
-# --- ÁREA PÚBLICA (RASTREIO) ---
+# --- ÁREA DO CLIENTE (RASTREIO) ---
 
 @app.route('/acompanhar_pedidos', methods=['GET', 'POST'])
 def acompanhar_pedidos():
-    # Rota liberada pra todo mundo, não precisa de login
+    # 1. BLOQUEIO DE ADMIN:
+    # Se for você (admin) que clicou no link, manda direto pro painel de gestão.
+    # Não faz sentido admin ficar nessa tela de busca simples.
+    if 'user_id' in session:
+        return redirect(url_for('pedidos'))
+
+    # 2. LÓGICA PRO CLIENTE:
     pedidos = []
     cliente_encontrado = None
-    aviso = None # Só pra controlar msg de erro se não achar nada
     
     if request.method == 'POST':
-        # Pega o que a pessoa digitou no campo de busca
         termo = request.form.get('termo_busca')
         
-        # Só processa se for número, pq nossos IDs são todos numéricos
+        # Só aceita números pra busca não quebrar
         if termo and termo.isdigit():
             id_buscado = int(termo)
             
-            # 1ª Tentativa: Vamo ver se existe um CLIENTE com esse código
+            # Primeiro tenta achar se é um código de CLIENTE
             cliente_encontrado = Cliente.query.get(id_buscado)
             
             if cliente_encontrado:
-                # Opa, achou o cliente! Puxa a capivara completa de pedidos dele
-                # Ordenando do mais novo pro mais velho
+                # Achou o cliente, traz a ficha completa dele
                 pedidos = Pedido.query.filter_by(cliente_id=cliente_encontrado.id).order_by(Pedido.id.desc()).all()
                 if not pedidos:
-                    flash(f'O cliente {cliente_encontrado.nome} foi encontrado, mas não tem pedidos ainda.', 'info')
+                    flash(f'Oi {cliente_encontrado.nome}, achamos seu cadastro mas você ainda não tem pedidos.', 'info')
             
             else:
-                # Não era cliente... então tenta ver se é o número direto do PEDIDO
+                # Não achou cliente, tenta ver se é o código do PEDIDO direto
                 pedido_unico = Pedido.query.get(id_buscado)
                 
                 if pedido_unico:
-                    # Achou! Coloca ele numa lista (mesmo sendo um só) pro HTML conseguir ler igual
+                    # Achou o pedido! Coloca na lista pra tela funcionar igual
                     pedidos = [pedido_unico]
-                    # Truque: recupera o dono desse pedido pra mostrar o nome na tela
                     cliente_encontrado = pedido_unico.cliente
                 else:
-                    # É, não achou nem cliente nem pedido com esse número
-                    flash('Não encontramos nenhum Cliente e nenhum Pedido com esse número.', 'warning')
-                    
+                    flash('Não encontramos nenhum cadastro nem pedido com esse número.', 'warning')
         else:
-            # Se o cara digitou letra ou deixou vazio
-            flash('Por favor, digite apenas números no campo de busca.', 'warning')
+            flash('Por favor, digite apenas números.', 'warning')
 
     return render_template('acompanhar_pedido.html', pedidos=pedidos, cliente=cliente_encontrado)
 
 
-# --- ROTAS ADMINISTRATIVAS (LOGIN OBRIGATÓRIO) ---
+# --- ÁREA RESTRITA (SÓ COM LOGIN) ---
 
 @app.route('/home')
 def home():
@@ -279,12 +291,13 @@ def home():
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session: return redirect(url_for('login'))
+    # Conta tudo pra mostrar os resumos
     total_pedidos = Pedido.query.count()
     total_clientes = Cliente.query.count()
     total_produtos = Produto.query.count()
     return render_template('dashboard.html', qtd_pedidos=total_pedidos, qtd_clientes=total_clientes, qtd_produtos=total_produtos)
 
-# --- CLIENTES ---
+# --- GESTÃO DE CLIENTES ---
 @app.route('/clientes', methods=['GET'])
 def clientes():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -296,7 +309,8 @@ def novo_cliente():
     if 'user_id' not in session: return redirect(url_for('login'))
     if request.method == 'POST':
         email_digitado = request.form['email']
-        if email_digitado == "": email_digitado = None
+        if email_digitado == "": email_digitado = None # Pra não salvar string vazia
+        
         novo = Cliente(
             nome=request.form['nome'],
             telefone=request.form['telefone'],
@@ -309,17 +323,19 @@ def novo_cliente():
         try:
             db.session.add(novo)
             db.session.commit()
-            flash('Cliente cadastrado com sucesso!', 'success')
+            flash('Cliente cadastrado!', 'success')
             return redirect(url_for('clientes'))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erro ao cadastrar: {e}', 'danger')
+            flash(f'Deu erro: {e}', 'danger')
+            
     return render_template('novo_cliente.html')
 
 @app.route('/clientes/editar/<int:id>', methods=['GET', 'POST'])
 def editar_cliente(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     cliente = Cliente.query.get_or_404(id)
+    
     if request.method == 'POST':
         cliente.nome = request.form['nome']
         cliente.telefone = request.form['telefone']
@@ -330,34 +346,38 @@ def editar_cliente(id):
         cliente.tipo_cliente = request.form['tipo_cliente']
         try:
             db.session.commit()
-            flash('Cliente atualizado!', 'success')
+            flash('Cadastro atualizado!', 'success')
             return redirect(url_for('clientes'))
         except:
             db.session.rollback()
-            flash('Erro ao atualizar.', 'danger')
+            flash('Erro ao salvar.', 'danger')
+            
     return render_template('editar_cliente.html', cliente=cliente)
 
 @app.route('/clientes/deletar/<int:id>', methods=['GET', 'POST'])
 def deletar_cliente(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     cliente = Cliente.query.get_or_404(id)
+    
     if request.method == 'POST':
+        # Segurança extra: pede senha pra deletar
         senha = request.form['password']
         user = User.query.get(session['user_id'])
         if user and user.check_password(senha):
             try:
                 db.session.delete(cliente)
                 db.session.commit()
-                flash('Cliente deletado.', 'success')
+                flash('Cliente removido.', 'success')
                 return redirect(url_for('clientes'))
             except Exception as e:
                 db.session.rollback()
                 flash(f'Erro: {e}', 'danger')
         else:
             flash('Senha incorreta.', 'danger')
+            
     return render_template('confirmar_delete.html', cliente=cliente)
 
-# --- PRODUTOS ---
+# --- GESTÃO DE PRODUTOS ---
 @app.route('/produtos', methods=['GET'])
 def produtos():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -385,12 +405,14 @@ def novo_produto():
         except Exception as e:
             db.session.rollback()
             flash(f'Erro: {e}', 'danger')
+            
     return render_template('novo_produto.html')
 
 @app.route('/produtos/editar/<int:id>', methods=['GET', 'POST'])
 def editar_produto(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     produto = Produto.query.get_or_404(id)
+    
     if request.method == 'POST':
         try:
             produto.nome_produto = request.form['nome_produto']
@@ -406,12 +428,14 @@ def editar_produto(id):
         except Exception as e:
             db.session.rollback()
             flash(f'Erro: {e}', 'danger')
+            
     return render_template('editar_produto.html', produto=produto)
 
 @app.route('/produtos/deletar/<int:id>', methods=['GET', 'POST'])
 def deletar_produto(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     produto = Produto.query.get_or_404(id)
+    
     if request.method == 'POST':
         senha = request.form['password']
         user = User.query.get(session['user_id'])
@@ -419,19 +443,21 @@ def deletar_produto(id):
             try:
                 db.session.delete(produto)
                 db.session.commit()
-                flash('Produto deletado.', 'success')
+                flash('Produto removido.', 'success')
                 return redirect(url_for('produtos'))
             except Exception as e:
                 db.session.rollback()
                 flash(f'Erro: {e}', 'danger')
         else:
             flash('Senha incorreta.', 'danger')
+            
     return render_template('confirmar_delete_produto.html', produto=produto)
 
-# --- PEDIDOS ---
+# --- GESTÃO DE PEDIDOS ---
 @app.route('/pedidos')
 def pedidos():
     if 'user_id' not in session: return redirect(url_for('login'))
+    # Mostra do mais recente pro mais antigo
     pedidos_cadastrados = Pedido.query.order_by(Pedido.id.desc()).all()
     return render_template('pedidos.html', lista_de_pedidos=pedidos_cadastrados)
 
@@ -439,6 +465,7 @@ def pedidos():
 def novo_pedido():
     if 'user_id' not in session: return redirect(url_for('login'))
 
+    # Se estivermos editando um pedido existente, pega o ID dele
     editar_id = request.args.get('editar_id')
     pedido_atual = None
     itens_existentes_json = '[]'
@@ -446,6 +473,7 @@ def novo_pedido():
     if editar_id:
         pedido_atual = Pedido.query.get(editar_id)
         if pedido_atual:
+            # Reconstrói o JSON pro javascript preencher a tela
             lista_temp = []
             for item in pedido_atual.itens:
                 lista_temp.append({
@@ -454,7 +482,7 @@ def novo_pedido():
                     'cor': item.cor,
                     'qty': item.quantidade,
                     'preco': item.preco_unitario_na_venda,
-                    'tabela': 'Recuperado', # Simples indicador visual
+                    'tabela': 'Recuperado',
                     'subtotal': item.preco_unitario_na_venda * item.quantidade
                 })
             itens_existentes_json = json.dumps(lista_temp)
@@ -471,23 +499,27 @@ def novo_pedido():
                 flash('O carrinho está vazio!', 'warning')
                 return redirect(url_for('novo_pedido'))
 
+            # Calcula prazo automático baseado nas horas
             tempo_total_horas = 0
             for item in lista_de_itens:
                 prod = Produto.query.get(int(item['id']))
                 tempo_total_horas += prod.tempo_producao * int(item['qty'])
             
+            # Divide por 10h/dia de trabalho
             dias_producao = math.ceil(tempo_total_horas / 10)
             data_prazo = datetime.now() + timedelta(days=dias_producao)
 
             if pedido_id_form:
+                # Se é edição, atualiza o existente
                 pedido_salvo = Pedido.query.get(pedido_id_form)
                 pedido_salvo.cliente_id = cliente_id
                 pedido_salvo.forma_envio = forma_envio
                 pedido_salvo.prazo_entrega = data_prazo
-                # Remove itens antigos para recriar com base no carrinho novo
+                # Remove itens velhos pra colocar os novos
                 for item_velho in pedido_salvo.itens:
                     db.session.delete(item_velho)
             else:
+                # Cria um novo do zero
                 pedido_salvo = Pedido(
                     cliente_id=cliente_id,
                     forma_envio=forma_envio,
@@ -498,6 +530,7 @@ def novo_pedido():
                 )
                 db.session.add(pedido_salvo)
 
+            # Salva os itens do carrinho no banco
             for item in lista_de_itens:
                 produto_db = Produto.query.get(int(item['id']))
                 preco_unitario = float(item['preco']) 
@@ -514,6 +547,7 @@ def novo_pedido():
                 db.session.add(novo_item_db)
 
             db.session.commit()
+            # Manda pra tela de pagamento pra fechar a conta
             return redirect(url_for('tela_pagamento', id=pedido_salvo.id))
 
         except Exception as e:
@@ -538,13 +572,17 @@ def novo_pedido():
 def tela_pagamento(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     pedido = Pedido.query.get_or_404(id)
+    
     total_valor = 0
     total_horas = 0
+    
     for item in pedido.itens:
         total_valor += item.preco_unitario_na_venda * item.quantidade
         prod = Produto.query.get(item.produto_id)
         total_horas += prod.tempo_producao * item.quantidade
+        
     dias = math.ceil(total_horas / 10)
+    
     return render_template('pagamento_pedido.html', pedido=pedido, total_valor=total_valor, total_horas=total_horas, dias_producao=dias)
 
 @app.route('/pedidos/salvar_pagamento/<int:id>', methods=['POST'])
@@ -554,14 +592,17 @@ def salvar_pagamento(id):
     try:
         pedido.desconto = float(request.form['valor_desconto_final'])
         
+        # Pega a data que o usuário confirmou na tela
         data_texto = request.form['prazo_entrega']
         pedido.prazo_entrega = datetime.strptime(data_texto, '%Y-%m-%d').date()
 
+        # Se teve sinal/pagamento
         v_sinal = float(request.form['valor_pago']) if request.form['valor_pago'] else 0.0
         if v_sinal > 0:
             pgto = Pagamento(pedido_id=pedido.id, metodo=request.form['metodo_pagamento'], valor=v_sinal)
             db.session.add(pgto)
 
+        # Taxas extras (frete, etc)
         taxas = request.form['lista_taxas_json']
         if taxas:
             lista = json.loads(taxas)
@@ -574,7 +615,7 @@ def salvar_pagamento(id):
         
         pedido.status = "Pendente" 
         db.session.commit()
-        flash(f'Pedido #{pedido.id} finalizado!', 'success')
+        flash(f'Pedido #{pedido.id} fechado com sucesso!', 'success')
         return redirect(url_for('pedidos'))
     except Exception as e:
         db.session.rollback()
@@ -585,6 +626,8 @@ def salvar_pagamento(id):
 def detalhes_pedido(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     pedido = Pedido.query.get_or_404(id)
+    
+    # Faz a matemática toda pra mostrar o resumo financeiro
     total_prod = sum(item.preco_unitario_na_venda * item.quantidade for item in pedido.itens)
     desc = pedido.desconto if pedido.desconto else 0.0
     liq = total_prod - desc
@@ -592,12 +635,14 @@ def detalhes_pedido(id):
     geral = liq + taxas
     pago = sum(p.valor for p in pedido.pagamentos)
     pend = geral - pago
+    
     return render_template('detalhes_pedido.html', pedido=pedido, total_produtos=total_prod, valor_desconto=desc, total_produtos_liquido=liq, total_taxas=taxas, total_geral=geral, total_pago=pago, valor_pendente=pend)
 
 @app.route('/pedidos/editar/<int:id>', methods=['GET', 'POST'])
 def editar_pedido(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     pedido = Pedido.query.get_or_404(id)
+    
     if request.method == 'POST':
         try:
             pedido.status = request.form['status']
@@ -609,12 +654,14 @@ def editar_pedido(id):
         except Exception as e:
             db.session.rollback()
             flash(f'Erro: {e}', 'danger')
+            
     return render_template('editar_pedido.html', pedido=pedido)
 
 @app.route('/pedidos/deletar/<int:id>', methods=['GET', 'POST'])
 def deletar_pedido(id):
     if 'user_id' not in session: return redirect(url_for('login'))
     pedido = Pedido.query.get_or_404(id)
+    
     if request.method == 'POST':
         senha = request.form['password']
         user = User.query.get(session['user_id'])
@@ -629,21 +676,22 @@ def deletar_pedido(id):
                 flash(f'Erro: {e}', 'danger')
         else:
             flash('Senha incorreta.', 'danger')
+            
     return render_template('confirmar_delete_pedido.html', pedido=pedido)
 
-# --- DEBUG & EXECUÇÃO ---
-
+# --- DEBUG (Pra ver se os arquivos tão lá) ---
 @app.route('/debug')
 def debug():
-    # Rota simples para verificar pastas no servidor se precisar
-    import os
     try:
+        import os
         conteudo = os.listdir(os.path.join(basedir, 'static', 'css'))
         return f"CSS Encontrado: {conteudo}"
     except Exception as e:
         return f"Erro ao ler estáticos: {e}"
 
+# --- INICIALIZAÇÃO ---
 if __name__ == '__main__':
     with app.app_context():
+        # Cria as tabelas se estiver rodando local no seu PC
         db.create_all()
     app.run(debug=True)
