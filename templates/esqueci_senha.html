@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Senha</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f4f7f6;">
+    <div class="container" style="max-width:400px; text-align:center;">
+        <h2 style="color:var(--roxo-profundo);">Recuperar Senha</h2>
+        <p>Informe o e-mail do usuário mestre.</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+               <div style="color: red; margin-bottom: 10px;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="email" name="email" placeholder="E-mail cadastrado" required style="width:100%; padding:12px; margin:10px 0; border-radius:50px; border:1px solid #ddd;">
+            <button type="submit" class="btn-gradiente" style="width:100%;">Enviar Código</button>
+        </form>
+        <br>
+        <a href="/login" style="color:#666;">Voltar</a>
+    </div>
+</body>
+</html>
