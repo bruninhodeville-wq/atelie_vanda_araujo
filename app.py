@@ -9,6 +9,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from whitenoise import WhiteNoise
 
+#teste
+
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
 
