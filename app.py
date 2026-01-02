@@ -226,23 +226,45 @@ def nova_senha():
 
 @app.route('/acompanhar_pedidos', methods=['GET', 'POST'])
 def acompanhar_pedidos():
-    # Rota PÚBLICA (Login não obrigatório)
+    # Rota liberada pra todo mundo, não precisa de login
     pedidos = []
     cliente_encontrado = None
+    aviso = None # Só pra controlar msg de erro se não achar nada
     
     if request.method == 'POST':
-        termo = request.form.get('cliente_id')
+        # Pega o que a pessoa digitou no campo de busca
+        termo = request.form.get('termo_busca')
         
+        # Só processa se for número, pq nossos IDs são todos numéricos
         if termo and termo.isdigit():
-            cliente_encontrado = Cliente.query.get(int(termo))
+            id_buscado = int(termo)
+            
+            # 1ª Tentativa: Vamo ver se existe um CLIENTE com esse código
+            cliente_encontrado = Cliente.query.get(id_buscado)
+            
             if cliente_encontrado:
+                # Opa, achou o cliente! Puxa a capivara completa de pedidos dele
+                # Ordenando do mais novo pro mais velho
                 pedidos = Pedido.query.filter_by(cliente_id=cliente_encontrado.id).order_by(Pedido.id.desc()).all()
                 if not pedidos:
-                    flash('Você ainda não possui pedidos registrados.', 'info')
+                    flash(f'O cliente {cliente_encontrado.nome} foi encontrado, mas não tem pedidos ainda.', 'info')
+            
             else:
-                flash('Cliente não encontrado com este ID.', 'danger')
+                # Não era cliente... então tenta ver se é o número direto do PEDIDO
+                pedido_unico = Pedido.query.get(id_buscado)
+                
+                if pedido_unico:
+                    # Achou! Coloca ele numa lista (mesmo sendo um só) pro HTML conseguir ler igual
+                    pedidos = [pedido_unico]
+                    # Truque: recupera o dono desse pedido pra mostrar o nome na tela
+                    cliente_encontrado = pedido_unico.cliente
+                else:
+                    # É, não achou nem cliente nem pedido com esse número
+                    flash('Não encontramos nenhum Cliente e nenhum Pedido com esse número.', 'warning')
+                    
         else:
-            flash('Por favor, digite um ID válido (apenas números).', 'warning')
+            # Se o cara digitou letra ou deixou vazio
+            flash('Por favor, digite apenas números no campo de busca.', 'warning')
 
     return render_template('acompanhar_pedido.html', pedidos=pedidos, cliente=cliente_encontrado)
 
