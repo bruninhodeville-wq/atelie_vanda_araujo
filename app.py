@@ -229,8 +229,6 @@ def nova_senha():
             return redirect(url_for('login'))
     return render_template('nova_senha.html')
 
-# --- ROTAS PRINCIPAIS (MANTIDAS) ---
-
 @app.route('/home')
 def home():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -260,6 +258,22 @@ def acompanhar_pedidos():
             flash('Por favor, digite um ID válido (apenas números).', 'warning')
 
     return render_template('acompanhar_pedido.html', pedidos=pedidos, cliente=cliente_encontrado)
+
+@app.route('/emergencia-criar-mestre')
+def emergencia():
+    try:
+        # Verifica se já existe
+        if User.query.count() > 0:
+            return "Já existe usuário cadastrado!"
+        
+        # Cria o usuário mestre na força
+        u = User(username="admin", email="seu-email@gmail.com") # <--- Coloque seu e-mail aqui
+        u.set_password("123456") # <--- Senha provisória
+        db.session.add(u)
+        db.session.commit()
+        return "Usuário Mestre recriado! Login: admin | Senha: 123456"
+    except Exception as e:
+        return f"Erro: {e}"
 
 
 if __name__ == '__main__':
