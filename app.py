@@ -19,7 +19,6 @@ app = Flask(__name__)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-# Estas variáveis serão configuradas lá no site do Render:
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
@@ -28,7 +27,7 @@ mail = Mail(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.wsgi_app = WhiteNoise(app.wsgi_app, root=os.path.join(basedir, 'static'), prefix='/static/')
 
-# Chave secreta também vem do ambiente (ou usa uma padrão se for local)
+
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'chave-padrao-desenvolvimento')
 
 # --- BANCO DE DADOS ---
@@ -242,7 +241,6 @@ def home():
 
 # ... (Cole aqui as rotas: /clientes, /produtos, /pedidos, /acompanhar_pedidos, etc) ...
 
-# --- ROTA TEMPORÁRIA PARA LIMPAR O BANCO ---
 
 if __name__ == '__main__':
     with app.app_context():
