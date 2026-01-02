@@ -177,7 +177,7 @@ def logout():
     flash('Você saiu do sistema.', 'info')
     return redirect(url_for('login'))
 
-# --- RECUPERAÇÃO DE SENHA ---
+# --- RECUPERAÇÃO DE SENHA
 
 @app.route('/esqueci-senha', methods=['GET', 'POST'])
 def esqueci_senha():
@@ -190,8 +190,8 @@ def esqueci_senha():
             session['reset_code'] = codigo
             session['reset_email'] = email_digitado
             
-            # Enviar E-mail (Protegido por Try/Except para não travar se o Render não estiver configurado)
             try:
+                # Usa as variáveis do Render que configuramos (image_d0cb8e.png)
                 msg = Message('Recuperação de Senha - Ateliê Vanda',
                               sender=app.config['MAIL_USERNAME'],
                               recipients=[email_digitado])
@@ -200,7 +200,7 @@ def esqueci_senha():
                 flash(f'Código enviado para {email_digitado}!', 'info')
                 return redirect(url_for('validar_codigo'))
             except Exception as e:
-                flash(f'Erro ao enviar e-mail. Verifique as configs do Render. Erro: {str(e)}', 'danger')
+                flash(f'Erro no envio: {str(e)}', 'danger')
         else:
             flash('E-mail não encontrado.', 'warning')
             

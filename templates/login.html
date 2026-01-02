@@ -9,141 +9,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 
     <style>
-        /* ===== ESTILOS EXCLUSIVOS DA TELA DE LOGIN ===== */
-        
-        /* Centraliza tudo na tela */
+        /* Estilos específicos da tela de login */
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f4f7f6 0%, #e6e9f0 100%);
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e6e9f0 100%); margin: 0; font-family: 'Segoe UI', sans-serif;
         }
-
-        /* Cartão de Login */
         .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(128, 0, 128, 0.15); /* Sombra suave roxa */
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(128, 0, 128, 0.15); width: 100%; max-width: 400px;
+            text-align: center; animation: fadeIn 0.8s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .login-header h1 { color: var(--roxo-profundo, #800080); font-size: 1.8rem; margin-bottom: 5px; }
+        .login-header p { color: #666; font-size: 0.9rem; margin-bottom: 25px; }
+        .icon-logo { font-size: 3rem; color: var(--magenta-neon, #ff00ff); margin-bottom: 10px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Cabeçalho */
-        .login-header h1 {
-            color: var(--roxo-profundo, #800080);
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            border: none;
-            padding: 0;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        .icon-logo {
-            font-size: 3rem;
-            color: var(--magenta-neon, #ff00ff);
-            margin-bottom: 10px;
-        }
-
-        /* Inputs Estilizados */
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            font-size: 0.85rem;
-            color: #555;
-            margin-bottom: 5px;
-            display: block;
-            font-weight: 600;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #aaa;
-            font-size: 1.2rem;
-        }
-
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .input-group label { font-size: 0.85rem; color: #555; margin-bottom: 5px; display: block; font-weight: 600; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 1.2rem; }
+        
         .input-group input {
-            width: 100%;
-            padding: 12px 12px 12px 45px; /* Espaço para o ícone */
-            border: 1px solid #ddd;
-            border-radius: 50px; /* Borda redonda estilo "pílula" */
-            font-size: 1rem;
-            transition: 0.3s;
-            background: #fafafa;
+            width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #ddd;
+            border-radius: 50px; font-size: 1rem; transition: 0.3s; background: #fafafa;
         }
-
         .input-group input:focus {
-            border-color: var(--magenta-neon, #ff00ff);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1);
-            outline: none;
+            border-color: var(--magenta-neon, #ff00ff); background: white;
+            box-shadow: 0 0 0 3px rgba(255, 0, 255, 0.1); outline: none;
         }
+        .input-group input:focus + i { color: var(--magenta-neon, #ff00ff); }
 
-        .input-group input:focus + i {
-            color: var(--magenta-neon, #ff00ff);
-        }
-
-        /* Botão */
         .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--roxo-profundo, #800080), var(--magenta-neon, #ff00ff));
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--roxo-profundo, #800080), var(--magenta-neon, #ff00ff));
+            color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px;
         }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4); }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 0, 255, 0.4);
-        }
-
-        /* Links do Rodapé */
-        .footer-links {
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-
-        .footer-links a {
-            color: var(--roxo-profundo, #800080);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
+        .footer-links { margin-top: 20px; font-size: 0.9rem; }
+        .footer-links a { color: #666; text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: var(--magenta-neon, #ff00ff); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -158,13 +64,10 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div style="padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; text-align: left; display: flex; align-items: center; gap: 8px;
+              <div style="padding: 10px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; text-align: left; display: flex; align-items: center; gap: 8px;
                    {% if category == 'success' %} background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;
                    {% elif category == 'danger' %} background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; 
                    {% else %} background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; {% endif %}">
-                 
-                 {% if category == 'danger' %}<i class='bx bx-error-circle'></i>{% endif %}
-                 {% if category == 'success' %}<i class='bx bx-check-circle'></i>{% endif %}
                  {{ message }}
               </div>
             {% endfor %}
@@ -192,7 +95,7 @@
         </form>
 
         <div class="footer-links">
-            <p>Ainda não tem conta? <a href="/register">Cadastre-se</a></p>
+            <a href="/esqueci-senha">Esqueci minha senha</a>
         </div>
     </div>
 
