@@ -620,26 +620,6 @@ def debug():
         return f"CSS Encontrado: {conteudo}"
     except Exception as e:
         return f"Erro ao ler estáticos: {e}"
-    
-
-@app.route('/fix-banco')
-def fix_banco():
-    try:
-        # 1. APAGA TUDO (Para garantir que a tabela velha suma)
-        db.drop_all()
-        
-        # 2. CRIA TUDO DO ZERO (Com as colunas novas, incluindo e-mail)
-        db.create_all()
-        u = User(username="vandaaraujo", email="vandiinhaaraujo22@gmail.com") 
-        u.set_password("Vanda@2102") 
-        
-        db.session.add(u)
-        db.session.commit()
-        
-        return "SUCESSO TOTAL! Banco resetado, tabelas atualizadas e usuário admin criado."
-            
-    except Exception as e:
-        return f"ERRO: {str(e)}"
 
 if __name__ == '__main__':
     with app.app_context():
