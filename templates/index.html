@@ -131,5 +131,20 @@
         <p>&copy; 2026 Vanda Araújo Ateliê. Todos os direitos reservados.</p>
     </footer>
 
+    <script>
+    // Função simples pra fazer a galeria andar pros lados
+    function rolarGaleria(direcao) {
+        const trilho = document.getElementById('trilhoGaleria');
+        const distancia = 300; // Quanto ele anda a cada clique (em pixels)
+        
+        if (direcao === 1) {
+            trilho.scrollLeft += distancia; // Vai pra direita
+        } else {
+            trilho.scrollLeft -= distancia; // Vai pra esquerda
+        }
+    }
+</script>
+</body>
+
 </body>
 </html>
