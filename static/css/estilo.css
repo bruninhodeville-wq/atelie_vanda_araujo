@@ -24,6 +24,25 @@ body {
 
 a { text-decoration: none; }
 
+/* Garante que a imagem e o texto fiquem alinhados no centro */
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--roxo); /* Mantém a cor do texto */
+}
+
+/* Controla o tamanho da imagem do nó para parecer um ícone */
+.logo-icone {
+    height: 45px; /* Define uma altura boa para a barra de navegação */
+    width: auto;  /* Mantém a proporção correta da imagem */
+    margin-right: 12px; /* Dá um espacinho entre o nó e o texto */
+    
+    /* Opcional: Se quiser que o ícone tenha uma sombra roxa suave para combinar */
+    /* filter: drop-shadow(2px 2px 4px rgba(128, 0, 128, 0.3)); */
+}
+
 /* ===== SIDEBAR (Mantendo o que já funcionava) ===== */
 .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 78px;
