@@ -135,15 +135,15 @@ class CustoEnvio(db.Model):
     status = Column(String(20), default='Pendente')
     pedido = relationship('Pedido', back_populates='custos_envios')
 
-
-# --- NAVEGAÇÃO BÁSICA (ROTAS) ---
-
+# --- ROTA INICIAL (VITRINE) ---
 @app.route('/')
 def index():
-    # Se já logou, joga pra Home. Se não, tela de login.
+    # Se a Vanda tiver logada, manda ela direto pro trabalho (Home do sistema)
     if 'user_id' in session:
         return redirect(url_for('home'))
-    return redirect(url_for('login'))
+        
+    # Se for visita (cliente), mostra a vitrine bonita com as fotos
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
