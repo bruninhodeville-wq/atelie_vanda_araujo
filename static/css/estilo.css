@@ -24,6 +24,82 @@ body {
 
 a { text-decoration: none; }
 
+/* --- CARROSSEL DA GALERIA --- */
+
+.galeria-slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 20px 0; /* Espaço pra foto não cortar quando der zoom */
+}
+
+/* O trilho onde as imagens correm */
+.track-fotos {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto; /* Permite rolar pro lado */
+    scroll-behavior: smooth; /* Rolagem macia */
+    padding: 20px 10px; /* Margem interna */
+    
+    /* Esconde a barra de rolagem feia (funciona na maioria dos navegadores) */
+    scrollbar-width: none; 
+}
+.track-fotos::-webkit-scrollbar {
+    display: none;
+}
+
+/* O cartão individual de cada foto */
+.foto-card-slide {
+    min-width: 280px; /* Tamanho fixo pra todas ficarem iguais */
+    height: 350px;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.4s ease; /* Animação suave */
+    flex-shrink: 0; /* Impede que a imagem esmague */
+    cursor: pointer;
+}
+
+.foto-card-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Mágica do Zoom ao passar o mouse */
+.foto-card-slide:hover {
+    transform: scale(1.1); /* Aumenta 10% */
+    z-index: 10; /* Traz pra frente das outras */
+    box-shadow: 0 15px 30px rgba(128, 0, 128, 0.4); /* Sombra roxa forte */
+}
+
+/* Botões de Navegação (< e >) */
+.btn-nav {
+    background: var(--roxo);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 20;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.btn-nav:hover {
+    background: var(--magenta);
+    transform: scale(1.1);
+}
+
 /* Garante que a imagem e o texto fiquem alinhados no centro */
 .logo {
     display: flex;

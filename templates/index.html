@@ -106,12 +106,24 @@
         <h2 style="color: var(--roxo); font-size: 2.5rem;">Nossas Criações</h2>
         <p>Um pouco do nosso trabalho recente</p>
         
-        <div class="grid-fotos">
-            {% for i in range(1, 18) %}
-            <div class="foto-card">
-                <img src="{{ url_for('static', filename='img/img_galeria_' ~ i ~ '.jpeg') }}">
+        <div class="galeria-slider">
+            
+            <button class="btn-nav prev" onclick="rolarGaleria(-1)">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+
+            <div class="track-fotos" id="trilhoGaleria">
+                {% for i in range(1, 18) %}
+                <div class="foto-card-slide">
+                    <img src="{{ url_for('static', filename='img/img_galeria_' ~ i ~ '.jpeg') }}">
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+            <button class="btn-nav next" onclick="rolarGaleria(1)">
+                <i class='bx bx-chevron-right'></i>
+            </button>
+
         </div>
     </section>
 
